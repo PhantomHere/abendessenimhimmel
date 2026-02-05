@@ -1,5 +1,7 @@
 "use client";
+
 import { useState } from "react";
+import Script from "next/script";
 
 export default function Footer() {
   const [status, setStatus] = useState('');
@@ -8,10 +10,20 @@ export default function Footer() {
     e.preventDefault();
     setStatus('Sende...');
 
-    const formElement = e.currentTarget;  // save reference early
+    const formElement = e.currentTarget;
     const formData = new FormData(formElement);
 
-    formData.append('access_key', '0ebaee82-9c6d-42c0-b6a6-81821f2af4de');  // confirm this is correct
+    // Get Turnstile token if widget loaded
+    const token = (window as any).turnstile?.getResponse();
+
+    if (!token) {
+      setStatus('Verifizierung läuft... Bitte warten oder Seite neu laden.');
+      return;
+    }
+
+    formData.append('cf-turnstile-response', token); // Send token to Web3Forms
+
+    formData.append('access_key', '0ebaee82-9c6d-42c0-b6a6-81821f2af4de');
 
     try {
       const response = await fetch('https://api.web3forms.com/submit', {
@@ -27,19 +39,26 @@ export default function Footer() {
 
       if (result.success) {
         setStatus('Nachricht erfolgreich gesendet!');
-        formElement.reset();  // use saved reference
+        formElement.reset();
       } else {
         console.error('Web3Forms response:', result);
         setStatus('Fehler: ' + (result.message || 'Service-Fehler. Bitte später versuchen.'));
       }
     } catch (error) {
-      console.error('Fetch failed:', error);  // better log
+      console.error('Fetch failed:', error);
       setStatus('Ein Netzwerkfehler ist aufgetreten. Prüfen Sie Ihre Internetverbindung oder versuchen Sie es später.');
     }
   };
 
   return (
     <footer id="contact" className="bg-black text-white pt-20 pb-10 border-t border-[#e7d8a9]/20">
+      {/* Load Turnstile script*/}
+      <Script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+        async
+        defer
+      />
+
       <div className="max-w-7xl mx-auto px-6 lg:px-25 grid md:grid-cols-2 gap-16">
         {/* Left Side: Brand & Info */}
         <div className="space-y-6">
@@ -60,7 +79,7 @@ export default function Footer() {
             </div>
             <div className="flex items-center gap-4 text-sm">
               <span className="text-[#e7d8a9] font-bold w-20">EMAIL:</span>
-              <span className="text-gray-400">ground-control@aetheria.com</span>  {/* ← change to real if needed */}
+              <span className="text-gray-400">ground-control@aetheria.com</span>
             </div>
           </div>
           <div className="pt-8 opacity-20 select-none">
@@ -107,8 +126,11 @@ export default function Footer() {
               />
             </div>
 
-            {/* Optional honeypot for spam (hidden from humans, bots fill it) */}
-            {/* <input type="text" name="botcheck" className="hidden" /> */}
+            {/* Invisible Turnstile widget — auto-runs, no user sees it */}
+            <div
+              className="cf-turnstile"
+              data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+            ></div>
 
             <button
               type="submit"
