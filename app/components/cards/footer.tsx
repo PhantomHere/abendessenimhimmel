@@ -7,29 +7,26 @@ export default function Footer() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus('Sende...');
-
+    
     const formData = new FormData(e.currentTarget);
-
-    // Add your public access key here (safe to expose)
-    formData.append('access_key', '0ebaee82-9c6d-42c0-b6a6-81821f2af4de');  // ← PASTE YOUR REAL KEY FROM WEB3FORMS DASHBOARD
-
-    // Optional honeypot for basic spam protection (bots fill hidden fields)
-    // formData.append('botcheck', '');  // leave empty - uncomment if you add the hidden input below
-
+    
+    // Add your public access key (from Web3Forms dashboard – it's safe here)
+    formData.append('access_key', 'YOUR_REAL_ACCESS_KEY_HERE');  // ← PASTE IT EXACTLY
+    
     try {
-      const response = await fetch('https://api.web3forms.com/submit', {
+      const response = await fetch('https://api.web3forms.com/submit', {  // ← CHANGED THIS LINE
         method: 'POST',
         body: formData,
       });
-
+    
       const result = await response.json();
-
+    
       if (result.success) {
         setStatus('Nachricht erfolgreich gesendet!');
-        e.currentTarget.reset();  // clear form
+        e.currentTarget.reset();
       } else {
-        console.error('Web3Forms error:', result);
-        setStatus('Fehler beim Senden. Bitte versuchen Sie es erneut.');
+        console.error('Web3Forms full response:', result);  // Logs details for debug
+        setStatus('Fehler: ' + (result.message || 'Unbekannter Fehler. Bitte später versuchen.'));
       }
     } catch (error) {
       console.error('Network error:', error);
