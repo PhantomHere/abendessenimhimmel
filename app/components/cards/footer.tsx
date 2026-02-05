@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Script from "next/script";
 
 export default function Footer() {
   const [status, setStatus] = useState('');
@@ -11,27 +10,23 @@ export default function Footer() {
     setStatus('Sende...');
 
     const formElement = e.currentTarget;
-    const formData = new FormData(formElement);
 
-    // Get Turnstile token — but DON'T send it
-    const token = (window as any).turnstile?.getResponse();
+    // Manually grab values (reliable in React)
+    const name = (formElement.elements.namedItem('name') as HTMLInputElement)?.value || '';
+    const email = (formElement.elements.namedItem('email') as HTMLInputElement)?.value || '';
+    const message = (formElement.elements.namedItem('message') as HTMLTextAreaElement)?.value || '';
 
-    // log if token was generated
-    if (token) {
-      console.log('Turnstile token generated (not sent):', token);
-    } else {
-      console.log('No Turnstile token — continuing anyway');
+    if (!name || !email || !message) {
+      setStatus('Bitte alle Felder ausfüllen.');
+      return;
     }
 
-    // Do NOT append cf-turnstile-response — avoids Pro feature error
-
+    const formData = new FormData();
     formData.append('access_key', '0ebaee82-9c6d-42c0-b6a6-81821f2af4de');
-
-    // Debug: show what's being sent
-    console.log('Sending to Web3Forms:');
-    for (const [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
-    }
+    formData.append('name', name);
+    formData.append('email', email);
+    formData.append('message', message);
+    formData.append('subject', `Neue Nachricht von ${name} (${email})`);
 
     try {
       const response = await fetch('https://api.web3forms.com/submit', {
@@ -39,19 +34,14 @@ export default function Footer() {
         body: formData,
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
       const result = await response.json();
-
-      console.log('Web3Forms full response:', result);
 
       if (result.success) {
         setStatus('Nachricht erfolgreich gesendet!');
         formElement.reset();
       } else {
-        setStatus('Fehler: ' + (result.message || 'Service-Fehler. Bitte später versuchen.'));
+        console.error('Web3Forms error:', result);
+        setStatus('Fehler beim Senden. Bitte versuchen Sie es erneut.');
       }
     } catch (error) {
       console.error('Fetch failed:', error);
@@ -61,13 +51,6 @@ export default function Footer() {
 
   return (
     <footer id="contact" className="bg-black text-white pt-20 pb-10 border-t border-[#e7d8a9]/20">
-      {/* Load Turnstile script*/}
-      <Script
-        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-        async
-        defer
-      />
-
       <div className="max-w-7xl mx-auto px-6 lg:px-25 grid md:grid-cols-2 gap-16">
         {/* Left Side: Brand & Info */}
         <div className="space-y-6">
@@ -103,48 +86,18 @@ export default function Footer() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="name" className="block text-xs text-[#e7d8a9] uppercase mb-1 ml-1">Name</label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                required
-                className="w-full bg-black border border-white/10 p-3 rounded text-white focus:border-[#e7d8a9] outline-none transition-colors"
-                placeholder="Ihr Name"
-              />
+              <input id="name" name="name" type="text" required className="..." placeholder="Ihr Name" />
             </div>
             <div>
               <label htmlFor="email" className="block text-xs text-[#e7d8a9] uppercase mb-1 ml-1">Email</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                className="w-full bg-black border border-white/10 p-3 rounded text-white focus:border-[#e7d8a9] outline-none transition-colors"
-                placeholder="name@beispiel.de"
-              />
+              <input id="email" name="email" type="email" required className="..." placeholder="name@beispiel.de" />
             </div>
             <div>
               <label htmlFor="message" className="block text-xs text-[#e7d8a9] uppercase mb-1 ml-1">Anliegen</label>
-              <textarea
-                id="message"
-                name="message"
-                rows={4}
-                required
-                className="w-full bg-black border border-white/10 p-3 rounded text-white focus:border-[#e7d8a9] outline-none transition-colors resize-none"
-                placeholder="Bitte schreiben Sie Nachrichten sorgfältig, wir haben eine begrenzte Anzahl von Anfragen pro Monat..."
-              />
+              <textarea id="message" name="message" rows={4} required className="..." placeholder="Bitte schreiben Sie Nachrichten sorgfältig..." />
             </div>
 
-            {/* Invisible Turnstile widget — auto-runs, no user sees it */}
-            <div
-              className="cf-turnstile"
-              data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-            ></div>
-
-            <button
-              type="submit"
-              className="w-full bg-[#e7d8a9] text-black py-4 rounded font-bold hover:bg-white transition-all transform active:scale-95"
-            >
+            <button type="submit" className="...">
               NACHRICHT ÜBERMITTELN
             </button>
 
