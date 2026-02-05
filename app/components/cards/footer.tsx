@@ -11,9 +11,9 @@ export default function Footer() {
 
     const formData = new FormData(e.currentTarget);
     const data = {
-      name: formData.get('name'),
-      email: formData.get('email'),
-      message: formData.get('message'),
+      name: formData.get('name') as string,
+      email: formData.get('email') as string,
+      message: formData.get('message') as string,
     };
 
     try {
@@ -27,6 +27,7 @@ export default function Footer() {
         setStatus('Nachricht erfolgreich gesendet!');
         (e.target as HTMLFormElement).reset();
       } else {
+        const errorData = await response.json();
         setStatus('Fehler beim Senden. Bitte versuchen Sie es erneut.');
       }
     } catch (error) {
@@ -132,3 +133,4 @@ export default function Footer() {
     </footer>
   );
 }
+
