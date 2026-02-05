@@ -103,7 +103,7 @@ export default function Footer() {
                 rows={4}
                 required
                 className="w-full bg-black border border-white/10 p-3 rounded text-white focus:border-[#e7d8a9] outline-none transition-colors resize-none"
-                placeholder="Ihre Nachricht an uns..."
+                placeholder="Bitte schreiben Sie Nachrichten sorgfältig, wir haben eine begrenzte Anzahl von Anfragen pro Monat..."
               />
             </div>
 
