@@ -89,7 +89,7 @@ export default function Footer() {
         </div>
 
         {/* Form */}
-        <div className="bg-zinc-900/50 p-8 rounded-xl border border-white/5">
+        <div className="bg-zinc-900/50 p-8 rounded-xl border border-white/5 cf-turnstile" data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}>
           <h3 className="text-white text-xl font-bold mb-6">Fluglogbuch: Nachricht senden</h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
