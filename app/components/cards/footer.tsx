@@ -8,29 +8,33 @@ export default function Footer() {
     e.preventDefault();
     setStatus('Sende...');
 
-    const formData = new FormData(e.currentTarget);
+    const formElement = e.currentTarget;  // save reference early
+    const formData = new FormData(formElement);
 
-    // Add your public access key (from Web3Forms dashboard – it's safe here)
-    formData.append('access_key', '0ebaee82-9c6d-42c0-b6a6-81821f2af4de');  // ← PASTE IT EXACTLY
+    formData.append('access_key', '0ebaee82-9c6d-42c0-b6a6-81821f2af4de');  // confirm this is correct
 
     try {
-      const response = await fetch('https://api.web3forms.com/submit', {  // ← CHANGED THIS LINE
+      const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         body: formData,
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
 
       const result = await response.json();
 
       if (result.success) {
         setStatus('Nachricht erfolgreich gesendet!');
-        e.currentTarget.reset();
+        formElement.reset();  // use saved reference
       } else {
-        console.error('Web3Forms full response:', result);  // Logs details for debug
-        setStatus('Fehler: ' + (result.message || 'Unbekannter Fehler. Bitte später versuchen.'));
+        console.error('Web3Forms response:', result);
+        setStatus('Fehler: ' + (result.message || 'Service-Fehler. Bitte später versuchen.'));
       }
     } catch (error) {
-      console.error('Network error:', error);
-      setStatus('Ein Netzwerkfehler ist aufgetreten.');
+      console.error('Fetch failed:', error);  // better log
+      setStatus('Ein Netzwerkfehler ist aufgetreten. Prüfen Sie Ihre Internetverbindung oder versuchen Sie es später.');
     }
   };
 
