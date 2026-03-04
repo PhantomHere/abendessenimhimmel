@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { createClient } from "@/utils/supabase/server";
 import Header_logo from "./components/hero/logo";
 import Main_Menu from "./components/hero/mainMenu";
 import HeroImage from "./components/hero/heroImage";
