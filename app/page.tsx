@@ -34,7 +34,6 @@ const clearCart = () => {
   setCartItems([]);
 };
 
-  // Inside Home() in page.tsx
   return (
     <main className="min-h-screen bg-[#1a1a1a]"> 
       <Header_logo />
