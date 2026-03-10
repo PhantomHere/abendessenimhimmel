@@ -1,5 +1,7 @@
 "use client";
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import { createClient } from "@/utils/supabase/client"; // adjust path if needed
 import { Recipe } from "../../page";
 
 interface Props {
@@ -7,13 +9,29 @@ interface Props {
 }
 
 export default function RecipeCarousel({ onAdd }: Props) {
-  const recipes: Recipe[] = [
-    { title: "Rinderfilet", desc: "Mit Trüffelkruste, Périgord-Trüffel & Jus de Veau", price: "40€", img: "/imgs/dish1.jpg" },
-    { title: "Lachs-Tartar", desc: "Frischer Wildlachs, Kaviar & Blinis", price: "25€", img: "/imgs/dish2.jpg" },
-    { title: "Pasta Paradiso", desc: "Hausgemachte Pasta, 36-Stunden-Ragu", price: "22€", img: "/imgs/dish3.jpg" },
-    { title: "Zitronen Sorbet", desc: "Sizilianische Zitronen, Limoncello & Meringue", price: "15€", img: "/imgs/dish4.jpg" },
-    { title: "Sauerbraten", desc: "Rinderbraten in Essig-Beizen-Marinade, Lebkuchensauce", price: "22€", img: "/imgs/dish5.jpg" },
-  ];
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from("recipes")
+        .select("*")
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        setError("Speisekarte konnte nicht geladen werden.");
+        console.error("Supabase fetch error:", error);
+      } else {
+        setRecipes(data as Recipe[]);
+      }
+      setLoading(false);
+    };
+
+    fetchRecipes();
+  }, []);
 
   return (
     <section id="menu" className="py-28 bg-[#0d0c0a]">
@@ -45,90 +63,116 @@ export default function RecipeCarousel({ onAdd }: Props) {
         </p>
       </div>
 
-      {/* Cards */}
-      <div className="flex gap-6 overflow-x-auto px-8 pb-8 scrollbar-hide snap-x snap-mandatory">
-        {recipes.map((recipe, index) => (
-          <article
-            key={index}
-            className="relative min-w-[320px] h-[480px] group overflow-hidden rounded-sm snap-center flex-shrink-0 cursor-pointer"
-            style={{ background: "#111009" }}
+      {/* Loading state */}
+      {loading && (
+        <div className="flex justify-center items-center h-48 gap-4">
+          <div className="w-4 h-px bg-[#c9a84c] animate-pulse" />
+          <span
+            className="text-[#c9a84c]/50 tracking-[0.4em] text-[10px] uppercase animate-pulse"
+            style={{ fontFamily: "var(--font-cinzel)" }}
           >
-            {/* Image with blur placeholder */}
-            <div className="absolute inset-0">
-              <Image
-                src={recipe.img}
-                alt={recipe.title}
-                fill
-                className={`
-                  object-cover 
-                  opacity-60 
-                  group-hover:opacity-80 
-                  group-hover:scale-105 
-                  transition-all duration-700 ease-out
-                `}
-                placeholder="blur"
-                // Optional: provide your own low-res blurDataURL if you want better control
-                // blurDataURL="data:image/jpeg;base64,/9j/2w..." 
-                quality={75}
-                sizes="(max-width: 768px) 100vw, 33vw"
-                priority={index <= 1} // load first 1–2 images eagerly
-              />
-            </div>
+            Speisekarte wird geladen
+          </span>
+          <div className="w-4 h-px bg-[#c9a84c] animate-pulse" />
+        </div>
+      )}
 
-            {/* Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0d0c0a] via-[#0d0c0a]/20 to-transparent" />
+      {/* Error state */}
+      {error && (
+        <div className="max-w-7xl mx-auto px-8 text-center">
+          <p
+            className="text-red-400/70 text-lg font-light"
+            style={{ fontFamily: "var(--font-cormorant)" }}
+          >
+            {error}
+          </p>
+        </div>
+      )}
 
-            {/* Gold corner accent */}
-            <div className="absolute top-0 left-0 w-12 h-12">
-              <div className="absolute top-0 left-0 w-full h-px bg-[#c9a84c]/40" />
-              <div className="absolute top-0 left-0 h-full w-px bg-[#c9a84c]/40" />
-            </div>
-            <div className="absolute top-0 right-0 w-12 h-12">
-              <div className="absolute top-0 right-0 w-full h-px bg-[#c9a84c]/40" />
-              <div className="absolute top-0 right-0 h-full w-px bg-[#c9a84c]/40" />
-            </div>
-
-            {/* Index number */}
-            <div
-              className="absolute top-5 left-0 right-0 flex justify-center text-[#c9a84c]/20 text-6xl font-light select-none pointer-events-none"
-              style={{ fontFamily: "var(--font-cinzel)" }}
+      {/* Cards */}
+      {!loading && !error && (
+        <div className="flex gap-6 overflow-x-auto px-8 pb-8 scrollbar-hide snap-x snap-mandatory">
+          {recipes.map((recipe, index) => (
+            <article
+              key={recipe.id ?? recipe.title} // ← prefer id if your table has it
+              className="relative min-w-[320px] h-[480px] group overflow-hidden rounded-sm snap-center flex-shrink-0 cursor-pointer bg-[#111009]"
             >
-              0{index + 1}
-            </div>
+              {/* Image with blur loading effect */}
+              <div className="absolute inset-0">
+                <Image
+                  src={recipe.img}
+                  alt={recipe.title}
+                  fill
+                  className="
+                    object-cover 
+                    opacity-60 
+                    group-hover:opacity-80 
+                    group-hover:scale-105 
+                    transition-all duration-700 ease-out
+                  "
+                  placeholder="blur"           // ← blur while loading
+                  quality={75}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  // Optional: priority on first 1–2 cards for better Largest Contentful Paint
+                  priority={index <= 1}
+                />
+              </div>
 
-            {/* Content */}
-            <div className="absolute inset-0 flex flex-col justify-end p-7">
-              <span
-                className="text-[#c9a84c] tracking-[0.35em] text-[10px] uppercase mb-3 block"
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0d0c0a] via-[#0d0c0a]/20 to-transparent" />
+
+              {/* Gold corner accents */}
+              <div className="absolute top-0 left-0 w-12 h-12">
+                <div className="absolute top-0 left-0 w-full h-px bg-[#c9a84c]/40" />
+                <div className="absolute top-0 left-0 h-full w-px bg-[#c9a84c]/40" />
+              </div>
+              <div className="absolute top-0 right-0 w-12 h-12">
+                <div className="absolute top-0 right-0 w-full h-px bg-[#c9a84c]/40" />
+                <div className="absolute top-0 right-0 h-full w-px bg-[#c9a84c]/40" />
+              </div>
+
+              {/* Index number */}
+              <div
+                className="absolute top-5 left-0 right-0 flex justify-center text-[#c9a84c]/20 text-6xl font-light select-none pointer-events-none"
                 style={{ fontFamily: "var(--font-cinzel)" }}
               >
-                {recipe.price}
-              </span>
-              <h3
-                className="text-[#ede0c4] text-3xl font-light mb-2 leading-tight"
-                style={{ fontFamily: "var(--font-cormorant)" }}
-              >
-                {recipe.title}
-              </h3>
-              <p
-                className="text-[#d4c5a0]/50 text-sm leading-relaxed max-h-0 overflow-hidden group-hover:max-h-20 transition-all duration-500"
-                style={{ fontFamily: "var(--font-cormorant)" }}
-              >
-                {recipe.desc}
-              </p>
+                {String(index + 1).padStart(2, "0")}
+              </div>
 
-              {/* Add button */}
-              <button
-                onClick={() => onAdd(recipe)}
-                className="mt-5 self-start border border-[#c9a84c]/50 hover:border-[#c9a84c] hover:bg-[#c9a84c] hover:text-[#0d0c0a] text-[#c9a84c] px-6 py-2 text-xs tracking-[0.25em] uppercase transition-all duration-300"
-                style={{ fontFamily: "var(--font-cinzel)" }}
-              >
-                Auswählen
-              </button>
-            </div>
-          </article>
-        ))}
-      </div>
+              {/* Content */}
+              <div className="absolute inset-0 flex flex-col justify-end p-7">
+                <span
+                  className="text-[#c9a84c] tracking-[0.35em] text-[10px] uppercase mb-3 block"
+                  style={{ fontFamily: "var(--font-cinzel)" }}
+                >
+                  {recipe.price}
+                </span>
+                <h3
+                  className="text-[#ede0c4] text-3xl font-light mb-2 leading-tight"
+                  style={{ fontFamily: "var(--font-cormorant)" }}
+                >
+                  {recipe.title}
+                </h3>
+                <p
+                  className="text-[#d4c5a0]/50 text-sm leading-relaxed max-h-0 overflow-hidden group-hover:max-h-20 transition-all duration-500"
+                  style={{ fontFamily: "var(--font-cormorant)" }}
+                >
+                  {recipe.desc}
+                </p>
+
+                {/* Add button */}
+                <button
+                  onClick={() => onAdd(recipe)}
+                  className="mt-5 self-start border border-[#c9a84c]/50 hover:border-[#c9a84c] hover:bg-[#c9a84c] hover:text-[#0d0c0a] text-[#c9a84c] px-6 py-2 text-xs tracking-[0.25em] uppercase transition-all duration-300"
+                  style={{ fontFamily: "var(--font-cinzel)" }}
+                >
+                  Auswählen
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
