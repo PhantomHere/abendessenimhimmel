@@ -61,6 +61,17 @@ Responsiv: Mobile-First mit Tailwind (gestapelte Abschnitte auf kleinen Bildschi
 Barrierefreiheit: Wahrscheinlich ARIA-Labels auf interaktiven Elementen, ausreichender Kontrast im Dark-Theme.
 Performance: Next.js Image-Komponente (WebP/AVIF), Lazy-Loading unterhalb des Fold.
 
+
+
+
+
+
+To-Do-Liste:
+UI-Überarbeitung;
+Tabellen aus Datenbank verbinden:
+Anmeldesystem;
+Allgemeine Codeüberprüfung und Neuverfilmung bestimmter Teile
+
 Aktueller Stand / MVP-Merkmale
 
 Keine vollständige Backend-Integration sichtbar (Mock-Daten oder lokaler State für Verfügbarkeit).
