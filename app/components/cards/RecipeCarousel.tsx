@@ -22,27 +22,32 @@ export default function RecipeCarousel({ onAdd }: Props) {
 
       <div className="flex gap-8 overflow-x-auto px-25 pb-10 scrollbar-hide snap-x snap-mandatory">
         {recipes.map((recipe, index) => (
-          <div key={index} className="min-w-75 h-100 relative group overflow-hidden rounded-lg snap-center bg-zinc-900">
-            {/* The Button */}
-            <button 
-              onClick={() => onAdd(recipe)} 
-              className="absolute top-4 right-4 z-50 bg-[#e7d8a9] text-black px-4 py-1 text-xs font-bold rounded hover:bg-white transition-colors"
-            >
-              + Hinzufügen
-            </button>
-
-            <div className="absolute inset-0 opacity-70 group-hover:opacity-100 transition-opacity duration-500">
-              <img src={recipe.img} alt={recipe.title} className="w-full h-full object-cover" />
-            </div>
-
-            <div className="absolute inset-0 p-6 flex flex-col justify-end bg-linear-to-t from-black via-transparent to-transparent">
-              <span className="text-[#e7d8a9] text-sm uppercase tracking-widest mb-2">{recipe.price}</span>
-              <h3 className="text-white text-2xl font-bold mb-1">{recipe.title}</h3>
-              <p className="text-gray-300 text-sm opacity-0 group-hover:opacity-100 transition-all duration-300">
-                {recipe.desc}
-              </p>
-            </div>
+        <div key={index} className="min-w-[320px] md:min-w-[380px] aspect-[4/5] relative group overflow-hidden rounded-2xl snap-center bg-black/40 backdrop-blur-md border border-[var(--color-gold)]/10 shadow-xl transition-all duration-500 hover:shadow-2xl hover:border-[var(--color-gold)]/30">
+          <button 
+            onClick={() => onAdd(recipe)}
+            className="absolute top-5 right-5 z-20 bg-[var(--color-gold)]/90 text-black px-5 py-2 text-sm font-semibold rounded-full hover:bg-[var(--color-gold)] transition-all hover:scale-105 active:scale-95 shadow-md"
+          >
+            + Hinzufügen
+          </button>
+                
+          <Image
+            src={recipe.img}
+            alt={recipe.title}
+            fill
+            className="object-cover transition-transform duration-700 group-hover:scale-110 brightness-75 group-hover:brightness-100"
+            quality={75}
+          />
+        
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                
+          <div className="absolute inset-x-0 bottom-0 p-8">
+            <span className="text-[var(--color-gold)] text-lg font-medium tracking-wide">{recipe.price}</span>
+            <h3 className="text-[var(--color-cream)] text-3xl font-serif mt-2 mb-3">{recipe.title}</h3>
+            <p className="text-[var(--color-text-dim)] text-base opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              {recipe.desc}
+            </p>
           </div>
+        </div>
         ))}
       </div>
     </section>
