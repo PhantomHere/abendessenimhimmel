@@ -26,7 +26,8 @@ export default function Home() {
   };
 
   const removeFromCart = (title: string) => {
-  setCartItems(cartItems.filter((item) => item.title !== title));
+  const idx = cartItems.findIndex((item) => item.title === title);
+  if (idx !== -1) setCartItems(cartItems.filter((_, i) => i !== idx));
 };
 
 const clearCart = () => {
@@ -50,7 +51,7 @@ const clearCart = () => {
       />
       <ReservationModal 
         isOpen={isResOpen} 
-        onClose={() => setIsResOpen(false)} 
+        onClose={() => { setIsResOpen(false); }}
         cartItems={cartItems} 
         onSuccess={clearCart}
       />

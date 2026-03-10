@@ -30,7 +30,7 @@ export default function Cart({ items, onRemove, onCheckout }: CartProps) {
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 z-100 flex justify-end">
+        <div className="fixed inset-0 z-[100] flex justify-end">
           <div className="absolute inset-0 bg-black/60" onClick={() => setIsOpen(false)} />
           <div className="relative w-80 h-full bg-[#1a1a1a] border-l border-[#e7d8a9]/20 p-8 flex flex-col">
             <h2 className="text-[#e7d8a9] text-2xl font-serif mb-8">Ihre Auswahl</h2>
