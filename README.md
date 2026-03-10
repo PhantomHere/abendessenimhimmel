@@ -68,7 +68,8 @@ Performance: Next.js Image-Komponente (WebP/AVIF), Lazy-Loading unterhalb des Fo
 
 To-Do-Liste: 
 UI-Überarbeitung; Abgeschlossen
-Tabellen aus Datenbank verbinden: Abgeschlossen
+Tabellen aus Datenbank verbinden; Abgeschlossen
+Implementierung der Reservierungsdatenbank; Abgeschlossen
 Anmeldesystem; Ausstehend...
 Allgemeine Codeüberprüfung und Neuverfilmung bestimmter Teile; Ausstehend...
 
