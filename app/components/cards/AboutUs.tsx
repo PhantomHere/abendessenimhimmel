@@ -2,56 +2,127 @@
 
 export default function AboutUs() {
   const stats = [
-    { label: "Flughöhe", value: "3.000m" },
-    { label: "Flotte", value: "3 Schiffe" },
-    { label: "Sterne", value: "2 Michelin" },
-    { label: "Gegründet", value: "1923 / 2026" },
+    { label: "Flughöhe", value: "3.000m", roman: "I" },
+    { label: "Flotte", value: "3 Schiffe", roman: "II" },
+    { label: "Michelin-Sterne", value: "2", roman: "III" },
+    { label: "Gegründet", value: "1923", roman: "IV" },
   ];
 
   return (
-    <section id="about" className="py-24 bg-[#1a1a1a] border-t border-white/5">
-      <div className="max-w-7xl mx-auto px-6 lg:px-25">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          
+    <section id="about" className="py-32 bg-[#0d0c0a] relative overflow-hidden">
+      
+      {/* Decorative background numeral */}
+      <div
+        className="absolute right-0 top-1/2 -translate-y-1/2 text-[#c9a84c]/[0.03] text-[28rem] font-black leading-none select-none pointer-events-none -mr-24"
+        style={{ fontFamily: "var(--font-cinzel)" }}
+      >
+        AD
+      </div>
+
+      <div className="max-w-7xl mx-auto px-8 relative">
+        
+        {/* Section label */}
+        <div className="flex items-center gap-4 mb-16">
+          <div className="w-8 h-px bg-[#c9a84c]" />
+          <span
+            className="text-[#c9a84c]/60 tracking-[0.4em] text-[9px] uppercase"
+            style={{ fontFamily: "var(--font-cinzel)" }}
+          >
+            Unsere Geschichte
+          </span>
+          <div className="flex-1 h-px bg-[#c9a84c]/10" />
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-24 items-center">
+
           {/* Text Content */}
-          <div className="space-y-8">
-            <h2 className="text-[#e7d8a9] text-4xl md:text-5xl font-serif leading-tight">
-              Kulinarik über den <br /> Wolken seit Generationen
+          <div>
+            <h2
+              className="text-[#ede0c4] text-6xl md:text-7xl font-light leading-[1.05] mb-10"
+              style={{ fontFamily: "var(--font-cormorant)" }}
+            >
+              Kulinarik über
+              <br />
+              <em className="italic text-[#c9a84c]">den Wolken</em>
+              <br />
+              seit Generationen
             </h2>
-            <p className="text-gray-300 text-lg leading-relaxed">
-              Willkommen an Bord der exklusivsten Restaurant-Flotte der Welt. 
-              Unsere Geschichte begann mit der Vision, die Eleganz der klassischen Luftschifffahrt 
-              mit moderner Haute Cuisine zu verbinden. 
-            </p>
-            <p className="text-gray-400">
-              In unseren Gondeln erleben Sie nicht nur ein Menü, sondern eine Reise durch die Atmosphäre. 
-              Jedes Gericht wird in unserer Bordküche frisch zubereitet, während Sie lautlos 
-              über die schönsten Landschaften Europas gleiten.
-            </p>
-            
-            {/* Stats Grid */}
-            <div className="grid grid-cols-2 gap-6 pt-8">
-              {stats.map((stat) => (
-                <div key={stat.label} className="border-l border-[#e7d8a9]/30 pl-4">
-                  <p className="text-2xl font-bold text-white">{stat.value}</p>
-                  <p className="text-sm text-[#e7d8a9] uppercase tracking-widest">{stat.label}</p>
+
+            <div className="space-y-5 mb-12">
+              <p
+                className="text-[#d4c5a0]/70 text-xl leading-relaxed font-light"
+                style={{ fontFamily: "var(--font-cormorant)" }}
+              >
+                Willkommen an Bord der exklusivsten Restaurant-Flotte der Welt. 
+                Unsere Geschichte begann mit der Vision, die Eleganz der klassischen 
+                Luftschifffahrt mit moderner Haute Cuisine zu verbinden.
+              </p>
+              <p
+                className="text-[#d4c5a0]/50 text-lg leading-relaxed font-light"
+                style={{ fontFamily: "var(--font-cormorant)" }}
+              >
+                In unseren Gondeln erleben Sie nicht nur ein Menü, sondern eine Reise 
+                durch die Atmosphäre. Jedes Gericht wird in unserer Bordküche frisch 
+                zubereitet, während Sie lautlos über die schönsten Landschaften Europas gleiten.
+              </p>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-2 gap-0 border-t border-[#c9a84c]/20">
+              {stats.map((stat, i) => (
+                <div
+                  key={stat.label}
+                  className={`py-7 pr-8 ${i % 2 === 0 ? "border-r border-[#c9a84c]/20" : "pl-8"} ${i < 2 ? "border-b border-[#c9a84c]/20" : ""}`}
+                >
+                  <p
+                    className="text-[#c9a84c]/30 text-xs mb-1"
+                    style={{ fontFamily: "var(--font-cinzel)" }}
+                  >
+                    {stat.roman}
+                  </p>
+                  <p
+                    className="text-[#ede0c4] text-3xl font-light mb-1"
+                    style={{ fontFamily: "var(--font-cormorant)" }}
+                  >
+                    {stat.value}
+                  </p>
+                  <p
+                    className="text-[#c9a84c]/60 tracking-[0.25em] text-[9px] uppercase"
+                    style={{ fontFamily: "var(--font-cinzel)" }}
+                  >
+                    {stat.label}
+                  </p>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Decorative Image*/}
-          <div className="relative group">
-            <div className="absolute -inset-4 border border-[#e7d8a9]/20 rounded-xl translate-x-4 translate-y-4 group-hover:translate-x-2 group-hover:translate-y-2 transition-transform duration-500" />
-            <div className="relative h-125 w-full bg-zinc-900 rounded-xl overflow-hidden shadow-2xl">
-              <img 
+          {/* Image */}
+          <div className="relative">
+            {/* Outer border frame */}
+            <div className="absolute -inset-5 border border-[#c9a84c]/15 rounded-sm" />
+            <div className="absolute -inset-2 border border-[#c9a84c]/08 rounded-sm" />
+
+            <div className="relative h-[600px] overflow-hidden rounded-sm">
+              <img
                 src="/imgs/airship-interior.jpg"
-                alt="Airship Interior" 
-                className="w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-[2s]"
+                alt="Airship Interior"
+                className="w-full h-full object-cover opacity-75 group-hover:scale-105 transition-transform duration-[3s]"
               />
-              <div className="absolute inset-0 bg-linear-to-t from-[#1a1a1a] via-transparent to-transparent" />
-              <div className="absolute bottom-8 left-8">
-                <p className="text-[#e7d8a9] font-serif italic text-xl">"Der Himmel ist kein Ort, sondern ein Erlebnis."</p>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0d0c0a] via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#0d0c0a]/30 to-transparent" />
+
+              {/* Quote overlay */}
+              <div className="absolute bottom-8 left-8 right-8">
+                <div className="w-8 h-px bg-[#c9a84c] mb-4" />
+                <p
+                  className="text-[#ede0c4]/90 text-2xl font-light italic leading-relaxed"
+                  style={{ fontFamily: "var(--font-cormorant)" }}
+                >
+                  „Der Himmel ist kein Ort,
+                  <br />
+                  sondern ein Erlebnis."
+                </p>
               </div>
             </div>
           </div>
