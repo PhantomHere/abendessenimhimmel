@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { Recipe } from "../../page";
 
 interface Props {
@@ -52,12 +53,25 @@ export default function RecipeCarousel({ onAdd }: Props) {
             className="relative min-w-[320px] h-[480px] group overflow-hidden rounded-sm snap-center flex-shrink-0 cursor-pointer"
             style={{ background: "#111009" }}
           >
-            {/* Image */}
+            {/* Image with blur placeholder */}
             <div className="absolute inset-0">
-              <img
+              <Image
                 src={recipe.img}
                 alt={recipe.title}
-                className="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700 ease-out"
+                fill
+                className={`
+                  object-cover 
+                  opacity-60 
+                  group-hover:opacity-80 
+                  group-hover:scale-105 
+                  transition-all duration-700 ease-out
+                `}
+                placeholder="blur"
+                // Optional: provide your own low-res blurDataURL if you want better control
+                // blurDataURL="data:image/jpeg;base64,/9j/2w..." 
+                quality={75}
+                sizes="(max-width: 768px) 100vw, 33vw"
+                priority={index <= 1} // load first 1–2 images eagerly
               />
             </div>
 
