@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { createClient } from "app/lib/supabase/client"; // adjust path if needed
+import { createClient } from "app/lib/supabase/client";
 import { Recipe } from "../../page";
 
 interface Props {
