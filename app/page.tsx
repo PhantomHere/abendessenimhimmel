@@ -11,6 +11,7 @@ import Footer from "./components/cards/footer";
 
 //Recipe looks like
 export type Recipe = {
+  id?: number;  
   title: string;
   desc: string;
   price: string;
