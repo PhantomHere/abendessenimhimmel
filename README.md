@@ -66,11 +66,11 @@ Performance: Next.js Image-Komponente (WebP/AVIF), Lazy-Loading unterhalb des Fo
 
 
 
-To-Do-Liste:
-UI-Überarbeitung;
-Tabellen aus Datenbank verbinden:
-Anmeldesystem;
-Allgemeine Codeüberprüfung und Neuverfilmung bestimmter Teile
+To-Do-Liste: 
+UI-Überarbeitung; Abgeschlossen
+Tabellen aus Datenbank verbinden: Abgeschlossen
+Anmeldesystem; Ausstehend...
+Allgemeine Codeüberprüfung und Neuverfilmung bestimmter Teile; Ausstehend...
 
 Aktueller Stand / MVP-Merkmale
 
