@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ABENDESSEN IM HIMMEL",
-  description: "forced to make :(",
+  title: "Aetheria Sky Dining – Abendessen über den Wolken",
+  description: "Exklusive Haute Cuisine in luftiger Höhe – buchen Sie Ihr unvergessliches Erlebnis",
 };
 
 export default function RootLayout({
