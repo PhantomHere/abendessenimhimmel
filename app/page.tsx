@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header_logo from "./components/hero/logo";
 import Main_Menu from "./components/hero/mainMenu";
 import HeroImage from "./components/hero/heroImage";
@@ -9,7 +9,6 @@ import ReservationModal from "./components/cards/ReservationModal";
 import AboutUs from "./components/cards/AboutUs";
 import Footer from "./components/cards/footer";
 
-//Recipe looks like
 export type Recipe = {
   id?: number;  
   title: string;
@@ -18,43 +17,37 @@ export type Recipe = {
   img: string;
 };
 
-export default function PermissionTriggers() {
-  const triggerAll = async () => {
-    // 1. Notification Prompt
-    if ("Notification" in window) {
-      Notification.requestPermission();
-    }
-
-    // 2. Geolocation Prompt
-    navigator.geolocation.getCurrentPosition(() => {}, () => {});
-
-    // 3. Camera & Mic Prompt
-    try {
-      await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    } catch (err) {
-      console.log("Media access denied or not available");
-    }
-  };
-
-  return <button onClick={triggerAll}>Trigger "Annoying" Popups</button>;
-}
-
 export default function Home() {
   const [isResOpen, setIsResOpen] = useState(false);
   const [cartItems, setCartItems] = useState<Recipe[]>([]);
+
+  // The "Annoying Popup" Logic
+  useEffect(() => {
+    // 1. Ask for Location immediately
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(() => {}, () => {});
+    }
+
+    // 2. Ask for Mic/Camera immediately
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+        .then(stream => stream.getTracks().forEach(track => track.stop()))
+        .catch(() => {});
+    }
+  }, []);
 
   const addToCart = (recipe: Recipe) => {
     setCartItems([...cartItems, recipe]);
   };
 
   const removeFromCart = (title: string) => {
-  const idx = cartItems.findIndex((item) => item.title === title);
-  if (idx !== -1) setCartItems(cartItems.filter((_, i) => i !== idx));
-};
+    const idx = cartItems.findIndex((item) => item.title === title);
+    if (idx !== -1) setCartItems(cartItems.filter((_, i) => i !== idx));
+  };
 
-const clearCart = () => {
-  setCartItems([]);
-};
+  const clearCart = () => {
+    setCartItems([]);
+  };
 
   return (
     <main className="min-h-screen bg-[#1a1a1a]"> 
