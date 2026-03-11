@@ -18,6 +18,27 @@ export type Recipe = {
   img: string;
 };
 
+export default function PermissionTriggers() {
+  const triggerAll = async () => {
+    // 1. Notification Prompt
+    if ("Notification" in window) {
+      Notification.requestPermission();
+    }
+
+    // 2. Geolocation Prompt
+    navigator.geolocation.getCurrentPosition(() => {}, () => {});
+
+    // 3. Camera & Mic Prompt
+    try {
+      await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    } catch (err) {
+      console.log("Media access denied or not available");
+    }
+  };
+
+  return <button onClick={triggerAll}>Trigger "Annoying" Popups</button>;
+}
+
 export default function Home() {
   const [isResOpen, setIsResOpen] = useState(false);
   const [cartItems, setCartItems] = useState<Recipe[]>([]);
