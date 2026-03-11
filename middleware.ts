@@ -31,9 +31,31 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // Already logged in → skip /login, go straight to dashboard
+  // Logged in but trying to access /admin → check role
+  if (user && request.nextUrl.pathname.startsWith('/admin')) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    // Not an admin → redirect to home with an error param
+    if (!profile || profile.role !== 'admin') {
+      return NextResponse.redirect(new URL('/?error=unauthorized', request.url))
+    }
+  }
+
+  // Already logged in as admin → skip /login
   if (user && request.nextUrl.pathname === '/login') {
-    return NextResponse.redirect(new URL('/admin', request.url))
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    if (profile?.role === 'admin') {
+      return NextResponse.redirect(new URL('/admin', request.url))
+    }
   }
 
   return supabaseResponse
