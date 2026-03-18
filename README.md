@@ -61,9 +61,11 @@ Responsiv: Mobile-First mit Tailwind (gestapelte Abschnitte auf kleinen Bildschi
 Barrierefreiheit: Wahrscheinlich ARIA-Labels auf interaktiven Elementen, ausreichender Kontrast im Dark-Theme.
 Performance: Next.js Image-Komponente (WebP/AVIF), Lazy-Loading unterhalb des Fold.
 
+Aktueller Stand / MVP-Merkmale
 
-
-
+Keine vollständige Backend-Integration sichtbar (Mock-Daten oder lokaler State für Verfügbarkeit).
+Menüs saisonal, aber noch nicht detailliert (Platzhalter-Text).
+Keine Benutzerkonten/Anmeldung – Gast-Checkout-Flow.
 
 
 To-Do-Liste: 
@@ -72,9 +74,3 @@ Tabellen aus Datenbank verbinden; Abgeschlossen
 Implementierung der Reservierungsdatenbank; Abgeschlossen
 Anmeldesystem; Ausstehend...
 Allgemeine Codeüberprüfung und Neuverfilmung bestimmter Teile; Ausstehend...
-
-Aktueller Stand / MVP-Merkmale
-
-Keine vollständige Backend-Integration sichtbar (Mock-Daten oder lokaler State für Verfügbarkeit).
-Menüs saisonal, aber noch nicht detailliert (Platzhalter-Text).
-Keine Benutzerkonten/Anmeldung – Gast-Checkout-Flow.
