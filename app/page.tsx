@@ -17,6 +17,7 @@ export type Recipe = {
   desc: string;
   price: string;
   img: string;
+  ingredients?: string;
 };
 
 // ── Separate component so useSearchParams can be wrapped in Suspense ──
