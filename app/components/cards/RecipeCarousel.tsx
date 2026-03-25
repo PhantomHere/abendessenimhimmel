@@ -8,6 +8,172 @@ interface Props {
   onAdd: (recipe: Recipe) => void;
 }
 
+// ── Isolated card component — each manages its own flip state ──
+function RecipeCard({
+  recipe,
+  index,
+  onAdd,
+}: {
+  recipe: Recipe;
+  index: number;
+  onAdd: (recipe: Recipe) => void;
+}) {
+  const [flipped, setFlipped] = useState(false);
+
+  const ingredientList: string[] =
+    Array.isArray(recipe.ingredients)
+      ? recipe.ingredients
+      : typeof recipe.ingredients === "string" && recipe.ingredients.trim()
+      ? recipe.ingredients.split(",").map((s) => s.trim())
+      : [];
+
+  return (
+    <div
+      style={{ perspective: "900px", height: "460px" }}
+      onMouseEnter={() => setFlipped(true)}
+      onMouseLeave={() => setFlipped(false)}
+    >
+      {/* Flip container — transform driven by React state, no CSS conflicts */}
+      <div
+        className="relative w-full h-full transition-transform duration-700 ease-in-out"
+        style={{
+          transformStyle: "preserve-3d",
+          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
+        }}
+      >
+
+        {/* ── FRONT FACE ── */}
+        <article
+          className="absolute inset-0 overflow-hidden rounded-sm cursor-pointer bg-[#111009]"
+          style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden" }}
+        >
+          <div className="absolute inset-0">
+            <Image
+              src={recipe.img}
+              alt={recipe.title}
+              fill
+              className="object-cover opacity-60 transition-opacity duration-700 ease-out"
+              quality={75}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              priority={index <= 1}
+            />
+          </div>
+
+          {/* Gradient */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0d0c0a] via-[#0d0c0a]/20 to-transparent" />
+
+          {/* Gold corner accents */}
+          <div className="absolute top-0 left-0 w-12 h-12">
+            <div className="absolute top-0 left-0 w-full h-px bg-[#c9a84c]/40" />
+            <div className="absolute top-0 left-0 h-full w-px bg-[#c9a84c]/40" />
+          </div>
+          <div className="absolute top-0 right-0 w-12 h-12">
+            <div className="absolute top-0 right-0 w-full h-px bg-[#c9a84c]/40" />
+            <div className="absolute top-0 right-0 h-full w-px bg-[#c9a84c]/40" />
+          </div>
+
+          {/* Index number */}
+          <div
+            className="absolute top-5 left-0 right-0 flex justify-center text-[#c9a84c]/20 text-6xl font-light select-none pointer-events-none"
+            style={{ fontFamily: "var(--font-cinzel)" }}
+          >
+            {String(index + 1).padStart(2, "0")}
+          </div>
+
+          {/* Title + price */}
+          <div className="absolute inset-0 flex flex-col justify-end p-7">
+            <span
+              className="text-[#c9a84c] tracking-[0.35em] text-[10px] uppercase mb-3 block"
+              style={{ fontFamily: "var(--font-cinzel)" }}
+            >
+              {recipe.price}
+            </span>
+            <h3
+              className="text-[#ede0c4] text-3xl font-light mb-2 leading-tight"
+              style={{ fontFamily: "var(--font-cormorant)" }}
+            >
+              {recipe.title}
+            </h3>
+          </div>
+        </article>
+
+        {/* ── BACK FACE ── */}
+        <div
+          className="absolute inset-0 rounded-sm bg-[#0f0d0b] border border-[#c9a84c]/25 flex flex-col justify-between"
+          style={{
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            transform: "rotateY(180deg)",
+          }}
+        >
+          {/* Header */}
+          <div className="border-b border-[#c9a84c]/20 px-6 pt-6 pb-5">
+            <span
+              className="text-[#c9a84c]/60 tracking-[0.4em] text-[9px] uppercase block mb-1"
+              style={{ fontFamily: "var(--font-cinzel)" }}
+            >
+              {recipe.price}
+            </span>
+            <h3
+              className="text-[#ede0c4] text-2xl font-light italic leading-snug"
+              style={{ fontFamily: "var(--font-cormorant)" }}
+            >
+              {recipe.title}
+            </h3>
+          </div>
+
+          {/* Ingredients + description */}
+          <div className="flex-1 overflow-hidden px-6 py-4">
+            {ingredientList.length > 0 && (
+              <>
+                <div className="flex items-center gap-3 mb-3">
+                  <span
+                    className="text-[#c9a84c]/50 tracking-[0.4em] text-[8px] uppercase"
+                    style={{ fontFamily: "var(--font-cinzel)" }}
+                  >
+                    Zutaten
+                  </span>
+                  <div className="flex-1 h-px bg-[#c9a84c]/15" />
+                </div>
+                <ul className="flex flex-wrap gap-1.5 mb-4">
+                  {ingredientList.map((ing) => (
+                    <li
+                      key={ing}
+                      className="text-[#d4c5a0]/75 bg-[#c9a84c]/[0.07] border border-[#c9a84c]/15 px-2.5 py-0.5 leading-relaxed"
+                      style={{ fontFamily: "var(--font-cormorant)", fontSize: "0.8rem" }}
+                    >
+                      {ing}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+            <p
+              className="text-[#d4c5a0]/50 leading-relaxed"
+              style={{ fontFamily: "var(--font-cormorant)", fontSize: "0.9rem" }}
+            >
+              {recipe.desc}
+            </p>
+          </div>
+
+          {/* CTA */}
+          <div className="px-6 pb-6 border-t border-[#c9a84c]/20 pt-4">
+            <button
+              onClick={() => onAdd(recipe)}
+              className="border border-[#c9a84c]/50 hover:border-[#c9a84c] hover:bg-[#c9a84c] hover:text-[#0d0c0a] text-[#c9a84c] px-6 py-2 text-xs tracking-[0.25em] uppercase transition-all duration-300"
+              style={{ fontFamily: "var(--font-cinzel)" }}
+            >
+              Auswählen
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+// ── Main carousel ──
 export default function RecipeCarousel({ onAdd }: Props) {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
@@ -93,174 +259,17 @@ export default function RecipeCarousel({ onAdd }: Props) {
       {/* Cards grid */}
       {!loading && !error && (
         <div className="max-w-7xl mx-auto px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {recipes.map((recipe, index) => {
-            // Parse ingredients: supports comma-separated string or array
-            const ingredientList: string[] =
-              Array.isArray(recipe.ingredients)
-                ? recipe.ingredients
-                : typeof recipe.ingredients === "string" && recipe.ingredients.trim()
-                ? recipe.ingredients.split(",").map((s) => s.trim())
-                : [];
-
-            return (
-              <div
-                key={recipe.id ?? recipe.title}
-                className="group"
-                style={{ perspective: "900px", height: "460px" }}
-              >
-                {/* Flip inner */}
-                <div
-                  className="relative w-full h-full transition-transform duration-700 ease-in-out"
-                  style={{
-                    transformStyle: "preserve-3d",
-                    transform: "rotateY(0deg)",
-                  }}
-                  // CSS class-based flip via group-hover on parent
-                >
-                  {/* ── FRONT FACE ── */}
-                  <article
-                    className="absolute inset-0 overflow-hidden rounded-sm cursor-pointer bg-[#111009]"
-                    style={{ backfaceVisibility: "hidden" }}
-                  >
-                    {/* Background image */}
-                    <div className="absolute inset-0">
-                      <Image
-                        src={recipe.img}
-                        alt={recipe.title}
-                        fill
-                        className="object-cover opacity-60 transition-all duration-700 ease-out group-hover:opacity-80 group-hover:scale-105"
-                        quality={75}
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        priority={index <= 1}
-                      />
-                    </div>
-
-                    {/* Gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0d0c0a] via-[#0d0c0a]/20 to-transparent" />
-
-                    {/* Gold corner accents */}
-                    <div className="absolute top-0 left-0 w-12 h-12">
-                      <div className="absolute top-0 left-0 w-full h-px bg-[#c9a84c]/40" />
-                      <div className="absolute top-0 left-0 h-full w-px bg-[#c9a84c]/40" />
-                    </div>
-                    <div className="absolute top-0 right-0 w-12 h-12">
-                      <div className="absolute top-0 right-0 w-full h-px bg-[#c9a84c]/40" />
-                      <div className="absolute top-0 right-0 h-full w-px bg-[#c9a84c]/40" />
-                    </div>
-
-                    {/* Index number */}
-                    <div
-                      className="absolute top-5 left-0 right-0 flex justify-center text-[#c9a84c]/20 text-6xl font-light select-none pointer-events-none"
-                      style={{ fontFamily: "var(--font-cinzel)" }}
-                    >
-                      {String(index + 1).padStart(2, "0")}
-                    </div>
-
-                    {/* Content */}
-                    <div className="absolute inset-0 flex flex-col justify-end p-7">
-                      <span
-                        className="text-[#c9a84c] tracking-[0.35em] text-[10px] uppercase mb-3 block"
-                        style={{ fontFamily: "var(--font-cinzel)" }}
-                      >
-                        {recipe.price}
-                      </span>
-                      <h3
-                        className="text-[#ede0c4] text-3xl font-light mb-2 leading-tight"
-                        style={{ fontFamily: "var(--font-cormorant)" }}
-                      >
-                        {recipe.title}
-                      </h3>
-                    </div>
-                  </article>
-
-                  {/* ── BACK FACE ── */}
-                  <div
-                    className="absolute inset-0 rounded-sm bg-[#0f0d0b] border border-[#c9a84c]/25 flex flex-col justify-between"
-                    style={{
-                      backfaceVisibility: "hidden",
-                      transform: "rotateY(180deg)",
-                    }}
-                  >
-                    {/* Back header */}
-                    <div className="border-b border-[#c9a84c]/20 px-6 pt-6 pb-5">
-                      <span
-                        className="text-[#c9a84c]/60 tracking-[0.4em] text-[9px] uppercase block mb-1"
-                        style={{ fontFamily: "var(--font-cinzel)" }}
-                      >
-                        {recipe.price}
-                      </span>
-                      <h3
-                        className="text-[#ede0c4] text-2xl font-light italic leading-snug"
-                        style={{ fontFamily: "var(--font-cormorant)" }}
-                      >
-                        {recipe.title}
-                      </h3>
-                    </div>
-
-                    {/* Ingredients + description */}
-                    <div className="flex-1 overflow-hidden px-6 py-4">
-                      {ingredientList.length > 0 && (
-                        <>
-                          {/* Label */}
-                          <div className="flex items-center gap-3 mb-3">
-                            <span
-                              className="text-[#c9a84c]/50 tracking-[0.4em] text-[8px] uppercase"
-                              style={{ fontFamily: "var(--font-cinzel)" }}
-                            >
-                              Zutaten
-                            </span>
-                            <div className="flex-1 h-px bg-[#c9a84c]/15" />
-                          </div>
-
-                          {/* Pills */}
-                          <ul className="flex flex-wrap gap-1.5 mb-4">
-                            {ingredientList.map((ing) => (
-                              <li
-                                key={ing}
-                                className="text-[#d4c5a0]/75 bg-[#c9a84c]/[0.07] border border-[#c9a84c]/15 px-2.5 py-0.5 text-xs leading-relaxed"
-                                style={{
-                                  fontFamily: "var(--font-cormorant)",
-                                  fontSize: "0.8rem",
-                                }}
-                              >
-                                {ing}
-                              </li>
-                            ))}
-                          </ul>
-                        </>
-                      )}
-
-                      {/* Description */}
-                      <p
-                        className="text-[#d4c5a0]/50 leading-relaxed"
-                        style={{ fontFamily: "var(--font-cormorant)", fontSize: "0.9rem" }}
-                      >
-                        {recipe.desc}
-                      </p>
-                    </div>
-
-                    {/* CTA */}
-                    <div className="px-6 pb-6 border-t border-[#c9a84c]/12 pt-4">
-                      <button
-                        onClick={() => onAdd(recipe)}
-                        className="border border-[#c9a84c]/50 hover:border-[#c9a84c] hover:bg-[#c9a84c] hover:text-[#0d0c0a] text-[#c9a84c] px-6 py-2 text-xs tracking-[0.25em] uppercase transition-all duration-300"
-                        style={{ fontFamily: "var(--font-cinzel)" }}
-                      >
-                        Auswählen
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          {recipes.map((recipe, index) => (
+            <RecipeCard
+              key={recipe.id ?? recipe.title}
+              recipe={recipe}
+              index={index}
+              onAdd={onAdd}
+            />
+          ))}
         </div>
       )}
-      <style jsx>{`
-        .group:hover > div {
-          transform: rotateY(180deg);
-        }
-      `}</style>
+
     </section>
   );
 }
