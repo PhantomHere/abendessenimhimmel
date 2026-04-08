@@ -7,10 +7,10 @@ export default function Header_logo() {
       {/* Top gold rule */}
       <div className="h-px w-full bg-gradient-to-r from-transparent via-[#c9a84c]/60 to-transparent" />
 
-      <div className="container mx-auto px-8 py-4 flex flex-col items-center gap-1">
+      <div className="container mx-auto px-4 sm:px-8 py-3 sm:py-4 flex flex-col items-center gap-1">
         {/* Overline label */}
         <span
-          className="text-[#c9a84c]/60 tracking-[0.4em] text-[9px] uppercase"
+          className="text-[#c9a84c]/60 tracking-[0.4em] text-[8px] sm:text-[9px] uppercase"
           style={{ fontFamily: "var(--font-cinzel)" }}
         >
           Since 1923
@@ -23,13 +23,13 @@ export default function Header_logo() {
             width={180}
             height={60}
             priority
-            className="h-20 w-auto brightness-110 contrast-110"
+            className="h-14 sm:h-20 w-auto brightness-110 contrast-110"
           />
         </Link>
 
         {/* Underline label */}
         <span
-          className="text-[#c9a84c]/40 tracking-[0.6em] text-[8px] uppercase"
+          className="text-[#c9a84c]/40 tracking-[0.4em] sm:tracking-[0.6em] text-[7px] sm:text-[8px] uppercase"
           style={{ fontFamily: "var(--font-cinzel)" }}
         >
           Haute Cuisine · 3.000m

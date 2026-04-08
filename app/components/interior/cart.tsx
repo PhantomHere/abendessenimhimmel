@@ -28,13 +28,13 @@ export default function Cart({ items, onRemove, onCheckout }: CartProps) {
       {/* Floating cart button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-8 right-8 z-50 group flex items-center gap-3 bg-[#0d0c0a] border border-[#c9a84c]/50 hover:border-[#c9a84c] px-5 py-3.5 transition-all duration-300 shadow-2xl"
+        className="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 z-50 group flex items-center gap-2 sm:gap-3 bg-[#0d0c0a] border border-[#c9a84c]/50 hover:border-[#c9a84c] px-4 sm:px-5 py-3 sm:py-3.5 transition-all duration-300 shadow-2xl"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
         </svg>
         <span
-          className="text-[#c9a84c] tracking-[0.2em] text-[10px] uppercase"
+          className="text-[#c9a84c] tracking-[0.2em] text-[10px] uppercase hidden sm:inline"
           style={{ fontFamily: "var(--font-cinzel)" }}
         >
           Auswahl
@@ -50,30 +50,41 @@ export default function Cart({ items, onRemove, onCheckout }: CartProps) {
       {isOpen && (
         <div className="fixed inset-0 z-[100] flex justify-end">
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
-          
-          <div className="relative w-96 h-full bg-[#0d0c0a] border-l border-[#c9a84c]/20 flex flex-col shadow-2xl">
-            
+
+          {/* Full-width on mobile, fixed width on larger screens */}
+          <div className="relative w-full sm:w-96 h-full bg-[#0d0c0a] border-l border-[#c9a84c]/20 flex flex-col shadow-2xl">
+
             {/* Drawer header */}
-            <div className="p-8 border-b border-[#c9a84c]/10">
-              <div className="flex items-center gap-3 mb-1">
-                <div className="w-4 h-px bg-[#c9a84c]" />
-                <span
-                  className="text-[#c9a84c]/60 tracking-[0.4em] text-[9px] uppercase"
-                  style={{ fontFamily: "var(--font-cinzel)" }}
+            <div className="p-6 sm:p-8 border-b border-[#c9a84c]/10 flex items-start justify-between">
+              <div>
+                <div className="flex items-center gap-3 mb-1">
+                  <div className="w-4 h-px bg-[#c9a84c]" />
+                  <span
+                    className="text-[#c9a84c]/60 tracking-[0.4em] text-[9px] uppercase"
+                    style={{ fontFamily: "var(--font-cinzel)" }}
+                  >
+                    Ihre Auswahl
+                  </span>
+                </div>
+                <h2
+                  className="text-[#ede0c4] text-2xl sm:text-3xl font-light"
+                  style={{ fontFamily: "var(--font-cormorant)" }}
                 >
-                  Ihre Auswahl
-                </span>
+                  Menü Zusammenstellung
+                </h2>
               </div>
-              <h2
-                className="text-[#ede0c4] text-3xl font-light"
-                style={{ fontFamily: "var(--font-cormorant)" }}
+              {/* Close button — visible on mobile */}
+              <button
+                onClick={() => setIsOpen(false)}
+                className="text-[#d4c5a0]/30 hover:text-[#c9a84c] transition-colors text-xl mt-1 sm:hidden"
+                aria-label="Schließen"
               >
-                Menü Zusammenstellung
-              </h2>
+                ✕
+              </button>
             </div>
 
             {/* Items */}
-            <div className="flex-1 overflow-y-auto p-8 space-y-5">
+            <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-5">
               {groupedItems.length === 0 ? (
                 <p
                   className="text-[#d4c5a0]/30 text-lg italic"
@@ -83,7 +94,7 @@ export default function Cart({ items, onRemove, onCheckout }: CartProps) {
                 </p>
               ) : (
                 groupedItems.map((item, idx) => (
-                  <div key={idx} className="flex justify-between items-start pb-5 border-b border-[#c9a84c]/10 last:border-0 group/item">
+                  <div key={idx} className="flex justify-between items-start pb-5 border-b border-[#c9a84c]/10 last:border-0">
                     <div>
                       <p
                         className="text-[#ede0c4] text-lg font-light"
@@ -101,9 +112,11 @@ export default function Cart({ items, onRemove, onCheckout }: CartProps) {
                         {item.price}
                       </p>
                     </div>
+                    {/* Always visible remove on mobile (no hover needed) */}
                     <button
                       onClick={() => onRemove(item.title)}
-                      className="text-[#d4c5a0]/20 hover:text-red-400 transition-colors text-xs opacity-0 group-hover/item:opacity-100 mt-1"
+                      className="text-[#d4c5a0]/30 hover:text-red-400 active:text-red-400 transition-colors text-base mt-1 p-1"
+                      aria-label={`${item.title} entfernen`}
                     >
                       ✕
                     </button>
@@ -113,8 +126,8 @@ export default function Cart({ items, onRemove, onCheckout }: CartProps) {
             </div>
 
             {/* Footer */}
-            <div className="p-8 border-t border-[#c9a84c]/10">
-              <div className="flex justify-between items-baseline mb-6">
+            <div className="p-6 sm:p-8 border-t border-[#c9a84c]/10">
+              <div className="flex justify-between items-baseline mb-5 sm:mb-6">
                 <span
                   className="text-[#c9a84c]/60 tracking-[0.25em] text-[10px] uppercase"
                   style={{ fontFamily: "var(--font-cinzel)" }}

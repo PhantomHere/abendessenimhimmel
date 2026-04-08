@@ -2,8 +2,8 @@ import Image from "next/image";
 
 export default function HeroImage() {
   return (
-    <section className="relative w-full h-[92vh] overflow-hidden">
-      
+    <section className="relative w-full h-[85vh] sm:h-[92vh] overflow-hidden">
+
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
@@ -30,13 +30,13 @@ export default function HeroImage() {
       />
 
       {/* Content */}
-      <div className="relative h-full flex flex-col justify-end px-16 pb-20 max-w-7xl">
-        
+      <div className="relative h-full flex flex-col justify-end px-6 sm:px-16 pb-14 sm:pb-20 max-w-7xl">
+
         {/* Eyebrow */}
-        <div className="flex items-center gap-4 mb-6">
-          <div className="w-12 h-px bg-[#c9a84c]" />
+        <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+          <div className="w-8 sm:w-12 h-px bg-[#c9a84c]" />
           <span
-            className="text-[#c9a84c]/80 tracking-[0.45em] text-[10px] uppercase"
+            className="text-[#c9a84c]/80 tracking-[0.3em] sm:tracking-[0.45em] text-[9px] sm:text-[10px] uppercase"
             style={{ fontFamily: "var(--font-cinzel)" }}
           >
             Haute Cuisine über den Wolken
@@ -45,7 +45,7 @@ export default function HeroImage() {
 
         {/* Main headline */}
         <h1
-          className="text-[#ede0c4] text-7xl md:text-8xl leading-[0.9] mb-6 font-light"
+          className="text-[#ede0c4] text-5xl sm:text-7xl md:text-8xl leading-[0.9] mb-4 sm:mb-6 font-light"
           style={{ fontFamily: "var(--font-cormorant)" }}
         >
           Willkommen
@@ -55,16 +55,16 @@ export default function HeroImage() {
 
         {/* Subtext */}
         <p
-          className="text-[#d4c5a0]/60 text-xl font-light max-w-lg leading-relaxed mb-10"
+          className="text-[#d4c5a0]/60 text-base sm:text-xl font-light max-w-lg leading-relaxed mb-8 sm:mb-10"
           style={{ fontFamily: "var(--font-cormorant)" }}
         >
-          Traditionelle Küche trifft auf moderne Eleganz — in 3.000 Metern Höhe, 
+          Traditionelle Küche trifft auf moderne Eleganz — in 3.000 Metern Höhe,
           lautlos über den schönsten Landschaften Europas.
         </p>
 
         {/* Scroll cue */}
         <div className="flex items-center gap-3">
-          <div className="w-px h-10 bg-gradient-to-b from-[#c9a84c] to-transparent" />
+          <div className="w-px h-8 sm:h-10 bg-gradient-to-b from-[#c9a84c] to-transparent" />
           <span
             className="text-[#c9a84c]/50 tracking-[0.3em] text-[9px] uppercase"
             style={{ fontFamily: "var(--font-cinzel)" }}

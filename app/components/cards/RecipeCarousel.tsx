@@ -30,10 +30,13 @@ function RecipeCard({
   return (
     <div
       style={{ perspective: "900px", height: "460px" }}
+      // Desktop: hover to flip
       onMouseEnter={() => setFlipped(true)}
       onMouseLeave={() => setFlipped(false)}
+      // Mobile: tap to flip
+      onClick={() => setFlipped((f) => !f)}
     >
-      {/* Flip container — transform driven by React state, no CSS conflicts */}
+      {/* Flip container */}
       <div
         className="relative w-full h-full transition-transform duration-700 ease-in-out"
         style={{
@@ -78,6 +81,16 @@ function RecipeCard({
             style={{ fontFamily: "var(--font-cinzel)" }}
           >
             {String(index + 1).padStart(2, "0")}
+          </div>
+
+          {/* Tap hint on mobile */}
+          <div className="absolute top-5 right-5 sm:hidden">
+            <span
+              className="text-[#c9a84c]/40 tracking-[0.2em] text-[8px] uppercase"
+              style={{ fontFamily: "var(--font-cinzel)" }}
+            >
+              Tippen
+            </span>
           </div>
 
           {/* Title + price */}
@@ -157,13 +170,20 @@ function RecipeCard({
           </div>
 
           {/* CTA */}
-          <div className="px-6 pb-6 border-t border-[#c9a84c]/20 pt-4">
+          <div className="px-6 pb-6 border-t border-[#c9a84c]/20 pt-4 flex items-center justify-between">
             <button
-              onClick={() => onAdd(recipe)}
-              className="border border-[#c9a84c]/50 hover:border-[#c9a84c] hover:bg-[#c9a84c] hover:text-[#0d0c0a] text-[#c9a84c] px-6 py-2 text-xs tracking-[0.25em] uppercase transition-all duration-300"
+              onClick={(e) => { e.stopPropagation(); onAdd(recipe); }}
+              className="border border-[#c9a84c]/50 hover:border-[#c9a84c] hover:bg-[#c9a84c] hover:text-[#0d0c0a] text-[#c9a84c] px-6 py-2.5 text-xs tracking-[0.25em] uppercase transition-all duration-300 active:bg-[#c9a84c] active:text-[#0d0c0a]"
               style={{ fontFamily: "var(--font-cinzel)" }}
             >
               Auswählen
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); setFlipped(false); }}
+              className="sm:hidden text-[#d4c5a0]/30 text-xs tracking-[0.2em] uppercase"
+              style={{ fontFamily: "var(--font-cinzel)" }}
+            >
+              ✕
             </button>
           </div>
         </div>
@@ -200,28 +220,36 @@ export default function RecipeCarousel({ onAdd }: Props) {
   }, []);
 
   return (
-    <section id="menu" className="py-28 bg-[#0d0c0a]">
+    <section id="menu" className="py-16 sm:py-28 bg-[#0d0c0a]">
 
       {/* Section header */}
-      <div className="max-w-7xl mx-auto px-8 mb-14 flex items-end justify-between">
-        <div>
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-8 h-px bg-[#c9a84c]" />
-            <span
-              className="text-[#c9a84c]/60 tracking-[0.4em] text-[9px] uppercase"
-              style={{ fontFamily: "var(--font-cinzel)" }}
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 mb-10 sm:mb-14">
+        <div className="flex items-end justify-between">
+          <div>
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-8 h-px bg-[#c9a84c]" />
+              <span
+                className="text-[#c9a84c]/60 tracking-[0.4em] text-[9px] uppercase"
+                style={{ fontFamily: "var(--font-cinzel)" }}
+              >
+                Saison 2026
+              </span>
+            </div>
+            <h2
+              className="text-[#ede0c4] text-4xl sm:text-5xl font-light"
+              style={{ fontFamily: "var(--font-cormorant)" }}
             >
-              Saison 2026
-            </span>
+              Saisonal{" "}
+              <em className="italic text-[#c9a84c] font-light">Empfohlen</em>
+            </h2>
           </div>
-          <h2
-            className="text-[#ede0c4] text-5xl font-light"
-            style={{ fontFamily: "var(--font-cormorant)" }}
-          >
-            Saisonal{" "}
-            <em className="italic text-[#c9a84c] font-light">Empfohlen</em>
-          </h2>
         </div>
+        <p
+          className="text-[#d4c5a0]/40 text-sm max-w-xs leading-relaxed mt-3 sm:hidden"
+          style={{ fontFamily: "var(--font-cormorant)" }}
+        >
+          Tippen Sie auf eine Karte, um Details zu sehen.
+        </p>
         <p
           className="text-[#d4c5a0]/40 text-sm max-w-xs text-right leading-relaxed hidden md:block"
           style={{ fontFamily: "var(--font-cormorant)" }}
@@ -246,7 +274,7 @@ export default function RecipeCarousel({ onAdd }: Props) {
 
       {/* Error state */}
       {error && (
-        <div className="max-w-7xl mx-auto px-8 text-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 text-center">
           <p
             className="text-red-400/70 text-lg font-light"
             style={{ fontFamily: "var(--font-cormorant)" }}
@@ -258,7 +286,7 @@ export default function RecipeCarousel({ onAdd }: Props) {
 
       {/* Cards grid */}
       {!loading && !error && (
-        <div className="max-w-7xl mx-auto px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {recipes.map((recipe, index) => (
             <RecipeCard
               key={recipe.id ?? recipe.title}

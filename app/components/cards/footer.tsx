@@ -35,13 +35,13 @@ export default function Footer() {
 
   return (
     <footer id="contact" className="bg-[#080807] border-t border-[#c9a84c]/15">
-      
+
       {/* Top gold line */}
       <div className="h-px w-full bg-gradient-to-r from-transparent via-[#c9a84c]/40 to-transparent" />
 
-      <div className="max-w-7xl mx-auto px-8 pt-24 pb-16">
-        
-        <div className="grid md:grid-cols-2 gap-20 mb-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-16 sm:pt-24 pb-12 sm:pb-16">
+
+        <div className="grid md:grid-cols-2 gap-12 sm:gap-20 mb-12 sm:mb-20">
 
           {/* Left: Brand */}
           <div>
@@ -56,7 +56,7 @@ export default function Footer() {
             </div>
 
             <h2
-              className="text-[#ede0c4] text-5xl font-light mb-6 leading-tight"
+              className="text-[#ede0c4] text-4xl sm:text-5xl font-light mb-5 sm:mb-6 leading-tight"
               style={{ fontFamily: "var(--font-cormorant)" }}
             >
               Aetheria{" "}
@@ -64,7 +64,7 @@ export default function Footer() {
             </h2>
 
             <p
-              className="text-[#d4c5a0]/40 text-lg font-light leading-relaxed max-w-sm mb-10"
+              className="text-[#d4c5a0]/40 text-base sm:text-lg font-light leading-relaxed max-w-sm mb-8 sm:mb-10"
               style={{ fontFamily: "var(--font-cormorant)" }}
             >
               Haben Sie Fragen zu unseren Routen oder privaten Charterflügen?
@@ -72,21 +72,21 @@ export default function Footer() {
             </p>
 
             {/* Contact details */}
-            <div className="space-y-5">
+            <div className="space-y-4 sm:space-y-5">
               {[
                 { label: "Standort", value: "Hangar 7, Berlin-Brandenburg" },
                 { label: "Funk", value: "+49 (0) 30 123 456 78" },
                 { label: "Email", value: "ground-control@aetheria.com" },
               ].map((item) => (
-                <div key={item.label} className="flex gap-6 items-baseline border-b border-white/5 pb-5">
+                <div key={item.label} className="flex gap-4 sm:gap-6 items-baseline border-b border-white/5 pb-4 sm:pb-5">
                   <span
-                    className="text-[#c9a84c]/50 tracking-[0.3em] text-[9px] uppercase w-16 flex-shrink-0"
+                    className="text-[#c9a84c]/50 tracking-[0.3em] text-[9px] uppercase w-14 sm:w-16 flex-shrink-0"
                     style={{ fontFamily: "var(--font-cinzel)" }}
                   >
                     {item.label}
                   </span>
                   <span
-                    className="text-[#d4c5a0]/50 text-base font-light"
+                    className="text-[#d4c5a0]/50 text-sm sm:text-base font-light"
                     style={{ fontFamily: "var(--font-cormorant)" }}
                   >
                     {item.value}
@@ -95,10 +95,10 @@ export default function Footer() {
               ))}
             </div>
 
-            {/* Decorative coordinates */}
-            <div className="mt-12 opacity-10 select-none">
+            {/* Decorative coordinates — hide on very small screens */}
+            <div className="mt-10 sm:mt-12 opacity-10 select-none hidden sm:block">
               <p
-                className="text-5xl font-black text-white"
+                className="text-4xl sm:text-5xl font-black text-white"
                 style={{ fontFamily: "var(--font-cinzel)" }}
               >
                 AIRSHIP-01
@@ -114,21 +114,21 @@ export default function Footer() {
 
           {/* Right: Contact form */}
           <div>
-            <div className="border border-[#c9a84c]/15 p-8">
+            <div className="border border-[#c9a84c]/15 p-5 sm:p-8">
               <h3
-                className="text-[#ede0c4] text-2xl font-light mb-2"
+                className="text-[#ede0c4] text-xl sm:text-2xl font-light mb-2"
                 style={{ fontFamily: "var(--font-cormorant)" }}
               >
                 Fluglogbuch
               </h3>
               <p
-                className="text-[#d4c5a0]/35 text-base font-light mb-7"
+                className="text-[#d4c5a0]/35 text-base font-light mb-6 sm:mb-7"
                 style={{ fontFamily: "var(--font-cormorant)" }}
               >
                 Nachricht senden
               </p>
 
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
                 {[
                   { id: "name", label: "Name", type: "text", placeholder: "Ihr Name" },
                   { id: "email", label: "Email", type: "email", placeholder: "name@beispiel.de" },
@@ -197,14 +197,14 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="border-t border-white/5 pt-6 sm:pt-8 flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
           <p
-            className="text-[#d4c5a0]/20 text-[9px] tracking-[0.4em] uppercase"
+            className="text-[#d4c5a0]/20 text-[9px] tracking-[0.4em] uppercase text-center sm:text-left"
             style={{ fontFamily: "var(--font-cinzel)" }}
           >
             © 2026 Aetheria Sky Dining. Alle Rechte vorbehalten.
           </p>
-          <div className="flex gap-8">
+          <div className="flex justify-center sm:justify-end gap-5 sm:gap-8 flex-wrap">
             {["Impressum", "Datenschutz", "Bordregeln"].map((link) => (
               <a
                 key={link}
