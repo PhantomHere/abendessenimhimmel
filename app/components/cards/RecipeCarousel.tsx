@@ -270,7 +270,7 @@ function MenuRow({
         transition: `opacity 0.5s ease ${delay}, transform 0.5s ease ${delay}, padding-left 0.25s ease`,
       }}
     >
-      {/* Index */}
+      {/* Index 48px */}
       <span
         className="text-[#c9a84c]/20 text-[10px] tracking-[0.3em] w-5 flex-shrink-0 select-none group-hover:text-[#c9a84c]/50 transition-colors duration-300"
         style={{ fontFamily: "var(--font-cinzel)" }}
@@ -285,7 +285,7 @@ function MenuRow({
           alt={recipe.title}
           fill
           className="object-cover opacity-60 group-hover:opacity-90 group-hover:scale-110 transition-all duration-500"
-          sizes="48px"
+          sizes="64px"  /* 48*/
         />
       </div>
 
