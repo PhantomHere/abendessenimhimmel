@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { createClient } from "app/lib/supabase/client";
 import { Recipe } from "../../page";
@@ -8,17 +8,46 @@ interface Props {
   onAdd: (recipe: Recipe) => void;
 }
 
-// ── Isolated card component — each manages its own flip state ──
-function RecipeCard({
+function useInView(threshold = 0.1) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setInView(true); obs.disconnect(); } },
+      { threshold }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return { ref, inView };
+}
+
+function AccordionItem({
   recipe,
   index,
+  isOpen,
+  onToggle,
   onAdd,
+  inView,
 }: {
   recipe: Recipe;
   index: number;
+  isOpen: boolean;
+  onToggle: () => void;
   onAdd: (recipe: Recipe) => void;
+  inView: boolean;
 }) {
-  const [flipped, setFlipped] = useState(false);
+  const [added, setAdded] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState(0);
+
+  useEffect(() => {
+    if (contentRef.current) {
+      setHeight(isOpen ? contentRef.current.scrollHeight : 0);
+    }
+  }, [isOpen]);
 
   const ingredientList: string[] =
     Array.isArray(recipe.ingredients)
@@ -27,177 +56,244 @@ function RecipeCard({
       ? recipe.ingredients.split(",").map((s) => s.trim())
       : [];
 
+  const handleAdd = () => {
+    onAdd(recipe);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1800);
+  };
+
+  const staggerDelay = `${index * 55}ms`;
+
   return (
     <div
-      style={{ perspective: "900px", height: "460px" }}
-      // Desktop: hover to flip
-      onMouseEnter={() => setFlipped(true)}
-      onMouseLeave={() => setFlipped(false)}
-      // Mobile: tap to flip
-      onClick={() => setFlipped((f) => !f)}
+      className="border-b border-[#c9a84c]/10 last:border-0 relative"
+      style={{
+        opacity: inView ? 1 : 0,
+        transform: inView ? "translateY(0)" : "translateY(20px)",
+        transition: `opacity 0.55s ease ${staggerDelay}, transform 0.55s ease ${staggerDelay}`,
+      }}
     >
-      {/* Flip container */}
+      {/* Gold left accent bar — expands when open */}
       <div
-        className="relative w-full h-full transition-transform duration-700 ease-in-out"
-        style={{
-          transformStyle: "preserve-3d",
-          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
-        }}
+        className="absolute left-0 top-0 w-px bg-[#c9a84c] transition-all duration-500 ease-out"
+        style={{ height: isOpen ? "100%" : "0%", opacity: isOpen ? 0.6 : 0 }}
+      />
+
+      {/* ── Row trigger ── */}
+      <button
+        onClick={onToggle}
+        className="w-full flex items-center gap-4 sm:gap-6 pl-3 pr-0 py-5 sm:py-6 text-left group/btn transition-all duration-300"
+        aria-expanded={isOpen}
       >
-
-        {/* ── FRONT FACE ── */}
-        <article
-          className="absolute inset-0 overflow-hidden rounded-sm cursor-pointer bg-[#111009]"
-          style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden" }}
-        >
-          <div className="absolute inset-0">
-            <Image
-              src={recipe.img}
-              alt={recipe.title}
-              fill
-              className="object-cover opacity-60 transition-opacity duration-700 ease-out"
-              quality={75}
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              priority={index <= 1}
-            />
-          </div>
-
-          {/* Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0d0c0a] via-[#0d0c0a]/20 to-transparent" />
-
-          {/* Gold corner accents */}
-          <div className="absolute top-0 left-0 w-12 h-12">
-            <div className="absolute top-0 left-0 w-full h-px bg-[#c9a84c]/40" />
-            <div className="absolute top-0 left-0 h-full w-px bg-[#c9a84c]/40" />
-          </div>
-          <div className="absolute top-0 right-0 w-12 h-12">
-            <div className="absolute top-0 right-0 w-full h-px bg-[#c9a84c]/40" />
-            <div className="absolute top-0 right-0 h-full w-px bg-[#c9a84c]/40" />
-          </div>
-
-          {/* Index number */}
-          <div
-            className="absolute top-5 left-0 right-0 flex justify-center text-[#c9a84c]/20 text-6xl font-light select-none pointer-events-none"
-            style={{ fontFamily: "var(--font-cinzel)" }}
-          >
-            {String(index + 1).padStart(2, "0")}
-          </div>
-
-          {/* Tap hint on mobile */}
-          <div className="absolute top-5 right-5 sm:hidden">
-            <span
-              className="text-[#c9a84c]/40 tracking-[0.2em] text-[8px] uppercase"
-              style={{ fontFamily: "var(--font-cinzel)" }}
-            >
-              Tippen
-            </span>
-          </div>
-
-          {/* Title + price */}
-          <div className="absolute inset-0 flex flex-col justify-end p-7">
-            <span
-              className="text-[#c9a84c] tracking-[0.35em] text-[10px] uppercase mb-3 block"
-              style={{ fontFamily: "var(--font-cinzel)" }}
-            >
-              {recipe.price}
-            </span>
-            <h3
-              className="text-[#ede0c4] text-3xl font-light mb-2 leading-tight"
-              style={{ fontFamily: "var(--font-cormorant)" }}
-            >
-              {recipe.title}
-            </h3>
-          </div>
-        </article>
-
-        {/* ── BACK FACE ── */}
-        <div
-          className="absolute inset-0 rounded-sm bg-[#0f0d0b] border border-[#c9a84c]/25 flex flex-col justify-between"
+        {/* Index */}
+        <span
+          className="text-[11px] tracking-[0.3em] w-6 flex-shrink-0 select-none transition-colors duration-300"
           style={{
-            backfaceVisibility: "hidden",
-            WebkitBackfaceVisibility: "hidden",
-            transform: "rotateY(180deg)",
+            fontFamily: "var(--font-cinzel)",
+            color: isOpen ? "rgba(201,168,76,0.7)" : "rgba(201,168,76,0.2)",
           }}
         >
-          {/* Header */}
-          <div className="border-b border-[#c9a84c]/20 px-6 pt-6 pb-5">
-            <span
-              className="text-[#c9a84c]/60 tracking-[0.4em] text-[9px] uppercase block mb-1"
-              style={{ fontFamily: "var(--font-cinzel)" }}
-            >
-              {recipe.price}
-            </span>
-            <h3
-              className="text-[#ede0c4] text-2xl font-light italic leading-snug"
-              style={{ fontFamily: "var(--font-cormorant)" }}
-            >
-              {recipe.title}
-            </h3>
-          </div>
+          {String(index + 1).padStart(2, "0")}
+        </span>
 
-          {/* Ingredients + description */}
-          <div className="flex-1 overflow-hidden px-6 py-4">
-            {ingredientList.length > 0 && (
-              <>
-                <div className="flex items-center gap-3 mb-3">
-                  <span
-                    className="text-[#c9a84c]/50 tracking-[0.4em] text-[8px] uppercase"
-                    style={{ fontFamily: "var(--font-cinzel)" }}
-                  >
-                    Zutaten
-                  </span>
-                  <div className="flex-1 h-px bg-[#c9a84c]/15" />
-                </div>
-                <ul className="flex flex-wrap gap-1.5 mb-4">
-                  {ingredientList.map((ing) => (
-                    <li
-                      key={ing}
-                      className="text-[#d4c5a0]/75 bg-[#c9a84c]/[0.07] border border-[#c9a84c]/15 px-2.5 py-0.5 leading-relaxed"
-                      style={{ fontFamily: "var(--font-cormorant)", fontSize: "0.8rem" }}
-                    >
-                      {ing}
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-            <p
-              className="text-[#d4c5a0]/50 leading-relaxed"
-              style={{ fontFamily: "var(--font-cormorant)", fontSize: "0.9rem" }}
-            >
-              {recipe.desc}
-            </p>
-          </div>
-
-          {/* CTA */}
-          <div className="px-6 pb-6 border-t border-[#c9a84c]/20 pt-4 flex items-center justify-between">
-            <button
-              onClick={(e) => { e.stopPropagation(); onAdd(recipe); }}
-              className="border border-[#c9a84c]/50 hover:border-[#c9a84c] hover:bg-[#c9a84c] hover:text-[#0d0c0a] text-[#c9a84c] px-6 py-2.5 text-xs tracking-[0.25em] uppercase transition-all duration-300 active:bg-[#c9a84c] active:text-[#0d0c0a]"
-              style={{ fontFamily: "var(--font-cinzel)" }}
-            >
-              Auswählen
-            </button>
-            <button
-              onClick={(e) => { e.stopPropagation(); setFlipped(false); }}
-              className="sm:hidden text-[#d4c5a0]/30 text-xs tracking-[0.2em] uppercase"
-              style={{ fontFamily: "var(--font-cinzel)" }}
-            >
-              ✕
-            </button>
-          </div>
+        {/* Thumbnail */}
+        <div
+          className="relative flex-shrink-0 overflow-hidden rounded-sm border transition-all duration-500"
+          style={{
+            width: isOpen ? "52px" : "40px",
+            height: isOpen ? "52px" : "40px",
+            borderColor: isOpen ? "rgba(201,168,76,0.35)" : "rgba(201,168,76,0.1)",
+          }}
+        >
+          <Image
+            src={recipe.img}
+            alt={recipe.title}
+            fill
+            className="object-cover transition-all duration-500"
+            style={{ opacity: isOpen ? 0.95 : 0.6, transform: isOpen ? "scale(1.08)" : "scale(1.04)" }}
+            sizes="52px"
+          />
         </div>
 
+        {/* Title + subtitle */}
+        <div className="flex-1 min-w-0">
+          <h3
+            className="font-light leading-snug truncate transition-colors duration-300"
+            style={{
+              fontFamily: "var(--font-cormorant)",
+              fontSize: isOpen ? "1.25rem" : "1.1rem",
+              color: isOpen ? "#c9a84c" : "#ede0c4",
+              transition: "color 0.3s, font-size 0.35s cubic-bezier(0.4,0,0.2,1)",
+            }}
+          >
+            {recipe.title}
+          </h3>
+          <p
+            className="text-[#d4c5a0]/30 text-xs font-light mt-0.5 truncate"
+            style={{
+              fontFamily: "var(--font-cormorant)",
+              opacity: isOpen ? 0 : 1,
+              maxHeight: isOpen ? 0 : "1.5rem",
+              overflow: "hidden",
+              transition: "opacity 0.25s ease, max-height 0.3s ease",
+            }}
+          >
+            {ingredientList.slice(0, 4).join(" · ")}
+            {ingredientList.length > 4 ? " · …" : ""}
+          </p>
+        </div>
+
+        {/* Price */}
+        <span
+          className="tracking-[0.2em] text-[10px] uppercase flex-shrink-0 transition-colors duration-300"
+          style={{
+            fontFamily: "var(--font-cinzel)",
+            color: isOpen ? "#c9a84c" : "rgba(201,168,76,0.6)",
+          }}
+        >
+          {recipe.price}
+        </span>
+
+        {/* Plus/minus icon */}
+        <div
+          className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 flex items-center justify-center border transition-all duration-350"
+          style={{
+            borderColor: isOpen ? "rgba(201,168,76,0.6)" : "rgba(201,168,76,0.15)",
+            transform: isOpen ? "rotate(45deg)" : "rotate(0deg)",
+            transition: "transform 0.38s cubic-bezier(0.4,0,0.2,1), border-color 0.3s",
+          }}
+        >
+          <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+            <path d="M1 4h6M4 1v6" stroke="#c9a84c" strokeWidth="1.2" strokeLinecap="round" opacity="0.8"/>
+          </svg>
+        </div>
+      </button>
+
+      {/* ── Expandable content ── */}
+      <div
+        ref={contentRef}
+        style={{
+          height: `${height}px`,
+          overflow: "hidden",
+          transition: "height 0.48s cubic-bezier(0.4, 0, 0.2, 1)",
+        }}
+      >
+        <div className="pb-7 pl-3 sm:pl-4 pr-0">
+          {/* Inner layout: image left, info right, CTA far right on desktop */}
+          <div className="flex gap-5 sm:gap-7 items-start">
+
+            {/* Larger reveal image */}
+            <div
+              className="relative flex-shrink-0 overflow-hidden rounded-sm border border-[#c9a84c]/15"
+              style={{
+                width: "88px",
+                height: "108px",
+                opacity: isOpen ? 1 : 0,
+                transform: isOpen ? "translateY(0)" : "translateY(8px)",
+                transition: "opacity 0.4s ease 0.1s, transform 0.4s ease 0.1s",
+              }}
+            >
+              <Image
+                src={recipe.img}
+                alt={recipe.title}
+                fill
+                className="object-cover opacity-80"
+                sizes="88px"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0d0c0a]/50 to-transparent" />
+            </div>
+
+            {/* Description + ingredients */}
+            <div className="flex-1 min-w-0">
+              <p
+                className="text-[#d4c5a0]/55 text-sm sm:text-base leading-relaxed mb-4 font-light"
+                style={{
+                  fontFamily: "var(--font-cormorant)",
+                  opacity: isOpen ? 1 : 0,
+                  transform: isOpen ? "translateY(0)" : "translateY(6px)",
+                  transition: "opacity 0.4s ease 0.12s, transform 0.4s ease 0.12s",
+                }}
+              >
+                {recipe.desc}
+              </p>
+
+              {ingredientList.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <span
+                      className="text-[#c9a84c]/35 tracking-[0.35em] text-[8px] uppercase"
+                      style={{ fontFamily: "var(--font-cinzel)" }}
+                    >
+                      Zutaten
+                    </span>
+                    <div className="flex-1 h-px bg-[#c9a84c]/8" />
+                  </div>
+                  <ul className="flex flex-wrap gap-1.5">
+                    {ingredientList.map((ing, i) => (
+                      <li
+                        key={ing}
+                        className="text-[#d4c5a0]/55 bg-[#c9a84c]/[0.05] border border-[#c9a84c]/10 px-2 py-0.5 text-[11px] leading-relaxed"
+                        style={{
+                          fontFamily: "var(--font-cormorant)",
+                          opacity: isOpen ? 1 : 0,
+                          transform: isOpen ? "translateY(0)" : "translateY(5px)",
+                          transition: `opacity 0.3s ease ${100 + i * 25}ms, transform 0.3s ease ${100 + i * 25}ms`,
+                        }}
+                      >
+                        {ing}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* CTA — inline on mobile */}
+              <div
+                className="mt-5"
+                style={{
+                  opacity: isOpen ? 1 : 0,
+                  transform: isOpen ? "translateY(0)" : "translateY(6px)",
+                  transition: "opacity 0.4s ease 0.2s, transform 0.4s ease 0.2s",
+                }}
+              >
+                <button
+                  onClick={handleAdd}
+                  className="relative overflow-hidden border px-6 py-2.5 text-[10px] tracking-[0.25em] uppercase transition-all duration-400 group/add"
+                  style={{
+                    fontFamily: "var(--font-cinzel)",
+                    borderColor: added ? "transparent" : "rgba(201,168,76,0.45)",
+                    color: added ? "#0d0c0a" : "#c9a84c",
+                    backgroundColor: added ? "#c9a84c" : "transparent",
+                  }}
+                >
+                  {!added && (
+                    <span className="absolute inset-0 bg-[#c9a84c] translate-y-full group-hover/add:translate-y-0 transition-transform duration-350" />
+                  )}
+                  <span className="relative" style={{ color: added ? "#0d0c0a" : undefined }}>
+                    {added ? "✓ Hinzugefügt" : (
+                      <>
+                        <span className="group-hover/add:hidden">Auswählen</span>
+                        <span className="hidden group-hover/add:inline" style={{ color: "#0d0c0a" }}>Auswählen</span>
+                      </>
+                    )}
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-// ── Main carousel ──
+// ── Main section ──────────────────────────────────────────────────
 export default function RecipeCarousel({ onAdd }: Props) {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const { ref, inView } = useInView(0.08);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -215,26 +311,31 @@ export default function RecipeCarousel({ onAdd }: Props) {
       }
       setLoading(false);
     };
-
     fetchRecipes();
   }, []);
 
   return (
-    <section id="menu" className="py-16 sm:py-28 bg-[#0d0c0a]">
+    <section id="menu" className="py-16 sm:py-24 bg-[#0d0c0a]">
 
       {/* Section header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 mb-10 sm:mb-14">
-        <div className="flex items-end justify-between">
-          <div>
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-8 h-px bg-[#c9a84c]" />
-              <span
-                className="text-[#c9a84c]/60 tracking-[0.4em] text-[9px] uppercase"
-                style={{ fontFamily: "var(--font-cinzel)" }}
-              >
-                Saison 2026
-              </span>
-            </div>
+      <div className="max-w-3xl mx-auto px-4 sm:px-8 mb-10 sm:mb-12" ref={ref}>
+        <div
+          style={{
+            opacity: inView ? 1 : 0,
+            transform: inView ? "translateY(0)" : "translateY(18px)",
+            transition: "opacity 0.6s ease, transform 0.6s ease",
+          }}
+        >
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-8 h-px bg-[#c9a84c]" />
+            <span
+              className="text-[#c9a84c]/60 tracking-[0.4em] text-[9px] uppercase"
+              style={{ fontFamily: "var(--font-cinzel)" }}
+            >
+              Saison 2026
+            </span>
+          </div>
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
             <h2
               className="text-[#ede0c4] text-4xl sm:text-5xl font-light"
               style={{ fontFamily: "var(--font-cormorant)" }}
@@ -242,25 +343,29 @@ export default function RecipeCarousel({ onAdd }: Props) {
               Saisonal{" "}
               <em className="italic text-[#c9a84c] font-light">Empfohlen</em>
             </h2>
+            <p
+              className="text-[#d4c5a0]/25 text-xs leading-relaxed"
+              style={{ fontFamily: "var(--font-cormorant)" }}
+            >
+              Tippen Sie auf ein Gericht für Details
+            </p>
           </div>
         </div>
-        <p
-          className="text-[#d4c5a0]/40 text-sm max-w-xs leading-relaxed mt-3 sm:hidden"
-          style={{ fontFamily: "var(--font-cormorant)" }}
-        >
-          Tippen Sie auf eine Karte, um Details zu sehen.
-        </p>
-        <p
-          className="text-[#d4c5a0]/40 text-sm max-w-xs text-right leading-relaxed hidden md:block"
-          style={{ fontFamily: "var(--font-cormorant)" }}
-        >
-          Jedes Gericht wird in unserer Bordküche frisch zubereitet — über den Wolken Europas.
-        </p>
+
+        {/* Divider */}
+        <div
+          className="mt-8 h-px"
+          style={{
+            background: "linear-gradient(to right, rgba(201,168,76,0.4), rgba(201,168,76,0.08), transparent)",
+            opacity: inView ? 1 : 0,
+            transition: "opacity 0.8s ease 0.25s",
+          }}
+        />
       </div>
 
-      {/* Loading state */}
+      {/* Loading */}
       {loading && (
-        <div className="flex justify-center items-center h-48 gap-4">
+        <div className="flex justify-center items-center h-32 gap-4">
           <div className="w-4 h-px bg-[#c9a84c] animate-pulse" />
           <span
             className="text-[#c9a84c]/50 tracking-[0.4em] text-[10px] uppercase animate-pulse"
@@ -272,32 +377,51 @@ export default function RecipeCarousel({ onAdd }: Props) {
         </div>
       )}
 
-      {/* Error state */}
+      {/* Error */}
       {error && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 text-center">
-          <p
-            className="text-red-400/70 text-lg font-light"
-            style={{ fontFamily: "var(--font-cormorant)" }}
-          >
+        <div className="max-w-3xl mx-auto px-4 sm:px-8 text-center">
+          <p className="text-red-400/70 text-lg font-light" style={{ fontFamily: "var(--font-cormorant)" }}>
             {error}
           </p>
         </div>
       )}
 
-      {/* Cards grid */}
+      {/* Accordion */}
       {!loading && !error && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {recipes.map((recipe, index) => (
-            <RecipeCard
-              key={recipe.id ?? recipe.title}
-              recipe={recipe}
-              index={index}
-              onAdd={onAdd}
-            />
-          ))}
+        <div className="max-w-3xl mx-auto px-4 sm:px-8">
+          <div className="border-t border-[#c9a84c]/10">
+            {recipes.map((recipe, index) => (
+              <AccordionItem
+                key={recipe.id ?? recipe.title}
+                recipe={recipe}
+                index={index}
+                isOpen={openIndex === index}
+                onToggle={() => setOpenIndex(openIndex === index ? null : index)}
+                onAdd={onAdd}
+                inView={inView}
+              />
+            ))}
+          </div>
+
+          {/* Footer rule */}
+          <div
+            className="mt-10 flex items-center gap-5"
+            style={{
+              opacity: inView ? 1 : 0,
+              transition: "opacity 0.8s ease 0.5s",
+            }}
+          >
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, rgba(201,168,76,0.18), transparent)" }} />
+            <span
+              className="text-[#c9a84c]/20 tracking-[0.35em] text-[8px] uppercase flex-shrink-0"
+              style={{ fontFamily: "var(--font-cinzel)" }}
+            >
+              Frisch zubereitet an Bord
+            </span>
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(to left, rgba(201,168,76,0.18), transparent)" }} />
+          </div>
         </div>
       )}
-
     </section>
   );
 }
