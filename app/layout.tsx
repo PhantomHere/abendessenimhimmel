@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Cinzel } from "next/font/google";
 import "./globals.css";
-import Script from "next/script";   // ← Add this import
+import Script from "next/script";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
