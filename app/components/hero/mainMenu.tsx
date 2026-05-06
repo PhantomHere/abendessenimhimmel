@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "../lib/supabase/client";
 
 interface MainMenuProps {
   onOpenReservation: () => void;
