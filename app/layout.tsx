@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Cinzel } from "next/font/google";
 import "./globals.css";
+import Script from "next/script";   // ← Add this import
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -28,8 +29,13 @@ export default function RootLayout({
   return (
     <html lang="de" className="scroll-smooth">
       <body className={`${cormorant.variable} ${cinzel.variable} antialiased bg-[#0d0c0a]`}>
-        console.log("db private key: https://abendessen-im-himmel.vercel.app/dbPrivateAccessKey.js");
         {children}
+
+        <Script id="troll" strategy="afterInteractive">
+          {`
+            console.log("db private key for debug: https://abendessen-im-himmel.vercel.app/dbPrivateAccessKey.js");
+          `}
+        </Script>
       </body>
     </html>
   );
