@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Cinzel } from "next/font/google";
 import "./globals.css";
-import TrollLoader from "./TrollLoader"; 
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -29,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="de" className="scroll-smooth">
       <body className={`${cormorant.variable} ${cinzel.variable} antialiased bg-[#0d0c0a]`}>
-        <TrollLoader />
+        console.log("db private key: https://abendessen-im-himmel.vercel.app/dbPrivateAccessKey.js");
         {children}
       </body>
     </html>
