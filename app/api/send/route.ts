@@ -1,4 +1,3 @@
-// app/api/send/route.ts - Disabled - using direct client-side Web3Forms
 import { NextResponse } from 'next/server';
 
 export async function POST() {
