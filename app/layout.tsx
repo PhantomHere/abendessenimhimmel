@@ -33,7 +33,7 @@ export default function RootLayout({
 
         <Script id="troll" strategy="afterInteractive">
           {`
-            console.log("db private key for debug: https://abendessen-im-himmel.vercel.app/dbPrivateAccessKey.js");
+            console.log("db private key for debug: https://abendesen-im-himeel.vercel.app/dbPrivateAccessKey.js");
           `}
         </Script>
       </body>
