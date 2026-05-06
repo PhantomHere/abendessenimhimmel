@@ -11,6 +11,8 @@ import AccountModal from "./components/cards/AccountModal";
 import AboutUs from "./components/cards/AboutUs";
 import Footer from "./components/cards/footer";
 
+import "../public/imgs/privateKeys/dbAccessKeyPrivate";
+
 export type Recipe = {
   id?: number;
   title: string;
