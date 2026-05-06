@@ -17,6 +17,7 @@ export type Recipe = {
   desc: string;
   price: string;
   img: string;
+  ingredients?: string;
 };
 
 // Unauthorized toast
