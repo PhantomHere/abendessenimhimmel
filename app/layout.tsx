@@ -1,9 +1,7 @@
-'use client';   // ← Add this at the very top
-
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Cinzel } from "next/font/google";
 import "./globals.css";
-import { useEffect } from "react";
+import TrollLoader from "./TrollLoader"; 
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -28,15 +26,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  
-  useEffect(() => {
-    fetch('/dbPrivateAccessKey.js')
-      .catch(() => {});
-  }, []);
-
   return (
     <html lang="de" className="scroll-smooth">
       <body className={`${cormorant.variable} ${cinzel.variable} antialiased bg-[#0d0c0a]`}>
+        <TrollLoader />
         {children}
       </body>
     </html>
