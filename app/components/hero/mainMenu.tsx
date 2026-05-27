@@ -30,7 +30,6 @@ export default function Main_Menu({ onOpenReservation, onOpenAccount }: MainMenu
     { name: "Kontakt", href: "#contact" },
   ];
 
-  // Container animation
   const containerVariants = {
     hidden: { opacity: 0, y: -20 },
     visible: {
@@ -38,7 +37,7 @@ export default function Main_Menu({ onOpenReservation, onOpenAccount }: MainMenu
       y: 0,
       transition: {
         duration: 0.8,
-        ease: "easeOut",
+        ease: [0.25, 0.1, 0.25, 1], // Proper cubic-bezier instead of string
         staggerChildren: 0.1,
       },
     },
@@ -46,7 +45,11 @@ export default function Main_Menu({ onOpenReservation, onOpenAccount }: MainMenu
 
   const itemVariants = {
     hidden: { opacity: 0, y: -15 },
-    visible: { opacity: 1, y: 0 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }
+    },
   };
 
   return (
@@ -58,13 +61,14 @@ export default function Main_Menu({ onOpenReservation, onOpenAccount }: MainMenu
     >
       <div className="max-w-7xl mx-auto px-8 flex items-center justify-between py-4">
 
-        {/* Left nav links - Staggered animation */}
+        {/* Left nav links */}
         <ul className="flex items-center gap-12">
           {navItems.map((item, index) => (
             <motion.li
               key={item.name}
               variants={itemVariants}
               whileHover={{ y: -2 }}
+              transition={{ duration: 0.3 }}
             >
               <a
                 href={item.href}
@@ -76,7 +80,7 @@ export default function Main_Menu({ onOpenReservation, onOpenAccount }: MainMenu
                   className="absolute -bottom-1 left-0 h-px bg-[#c9a84c]"
                   initial={{ width: 0 }}
                   whileHover={{ width: "100%" }}
-                  transition={{ duration: 0.4 }}
+                  transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
                 />
               </a>
             </motion.li>
@@ -91,10 +95,10 @@ export default function Main_Menu({ onOpenReservation, onOpenAccount }: MainMenu
             onClick={onOpenAccount}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
+            transition={{ duration: 0.2 }}
             className="relative flex items-center gap-2 text-[#d4c5a0]/50 hover:text-[#c9a84c] transition-colors duration-300 group"
             title={isLoggedIn ? "Mein Konto" : "Anmelden"}
           >
-            {/* Person icon */}
             <svg
               width="18" height="18" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
@@ -122,11 +126,12 @@ export default function Main_Menu({ onOpenReservation, onOpenAccount }: MainMenu
           {/* Divider */}
           <div className="w-px h-4 bg-[#c9a84c]/20" />
 
-          {/* Reservation CTA - Premium button */}
+          {/* Reservation CTA */}
           <motion.button
             onClick={onOpenReservation}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
+            transition={{ duration: 0.2 }}
             className="relative group border border-[#c9a84c]/60 hover:border-[#c9a84c] px-8 py-2.5 text-[#c9a84c] hover:text-[#0d0c0a] transition-all duration-500 tracking-[0.25em] text-xs uppercase overflow-hidden"
             style={{ fontFamily: "var(--font-cinzel)" }}
           >
@@ -134,7 +139,7 @@ export default function Main_Menu({ onOpenReservation, onOpenAccount }: MainMenu
               className="absolute inset-0 bg-[#c9a84c]"
               initial={{ translateY: "100%" }}
               whileHover={{ translateY: 0 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
+              transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
             />
             <span className="relative z-10">Reservierung</span>
           </motion.button>
