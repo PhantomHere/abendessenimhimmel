@@ -30,33 +30,11 @@ export default function Main_Menu({ onOpenReservation, onOpenAccount }: MainMenu
     { name: "Kontakt", href: "#contact" },
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.25, 0.1, 0.25, 1], // Proper cubic-bezier instead of string
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: -15 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }
-    },
-  };
-
   return (
     <motion.nav
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
       className="relative bg-[#0d0c0a] border-b border-[#c9a84c]/10"
     >
       <div className="max-w-7xl mx-auto px-8 flex items-center justify-between py-4">
@@ -66,9 +44,10 @@ export default function Main_Menu({ onOpenReservation, onOpenAccount }: MainMenu
           {navItems.map((item, index) => (
             <motion.li
               key={item.name}
-              variants={itemVariants}
+              initial={{ opacity: 0, y: -15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: index * 0.08 }}
               whileHover={{ y: -2 }}
-              transition={{ duration: 0.3 }}
             >
               <a
                 href={item.href}
@@ -80,7 +59,7 @@ export default function Main_Menu({ onOpenReservation, onOpenAccount }: MainMenu
                   className="absolute -bottom-1 left-0 h-px bg-[#c9a84c]"
                   initial={{ width: 0 }}
                   whileHover={{ width: "100%" }}
-                  transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+                  transition={{ duration: 0.4 }}
                 />
               </a>
             </motion.li>
@@ -94,7 +73,7 @@ export default function Main_Menu({ onOpenReservation, onOpenAccount }: MainMenu
           <motion.button
             onClick={onOpenAccount}
             whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.98 }}
+            whileTap={{ scale: 0.97 }}
             transition={{ duration: 0.2 }}
             className="relative flex items-center gap-2 text-[#d4c5a0]/50 hover:text-[#c9a84c] transition-colors duration-300 group"
             title={isLoggedIn ? "Mein Konto" : "Anmelden"}
@@ -137,9 +116,9 @@ export default function Main_Menu({ onOpenReservation, onOpenAccount }: MainMenu
           >
             <motion.span
               className="absolute inset-0 bg-[#c9a84c]"
-              initial={{ translateY: "100%" }}
-              whileHover={{ translateY: 0 }}
-              transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+              initial={{ y: "100%" }}
+              whileHover={{ y: 0 }}
+              transition={{ duration: 0.4 }}
             />
             <span className="relative z-10">Reservierung</span>
           </motion.button>
