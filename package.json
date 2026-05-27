@@ -14,7 +14,8 @@
     "react-dom": "19.2.3",
     "@supabase/ssr": "^0.5.0",
     "@supabase/supabase-js": "^2.45.4",
-    "@vercel/analytics": "latest"
+    "@vercel/analytics": "latest",
+    "framer-motion": "^12.0.0"
   },
   "devDependencies": {
     "typescript": "^5.1.0",
