@@ -47,12 +47,19 @@ function DishDetail({
           onClick={onClose}
         />
 
-        {/* Panel */}
+        {/* Main Panel */}
         <motion.div
           initial={{ x: "100%", opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          exit={{ x: "100%", opacity: 0 }}
-          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+          exit={{ 
+            x: "100%", 
+            opacity: 0,
+            transition: { duration: 0.45, ease: [0.4, 0, 1, 1] }   // Smooth & luxurious close
+          }}
+          transition={{ 
+            duration: 0.55, 
+            ease: [0.25, 0.1, 0.25, 1] 
+          }}
           className="
             relative mt-auto w-full h-[92vh] sm:mt-0 sm:ml-auto sm:w-[560px] sm:h-full
             lg:w-full lg:h-full lg:flex lg:flex-row bg-[#0d0c0a]
@@ -83,8 +90,8 @@ function DishDetail({
             {/* Close Button */}
             <motion.button
               onClick={onClose}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.1, rotate: 90 }}
+              whileTap={{ scale: 0.9 }}
               className="absolute top-5 right-5 w-10 h-10 flex items-center justify-center border border-[#c9a84c]/30 bg-[#0d0c0a]/70 text-[#c9a84c]/70 hover:text-[#c9a84c] hover:border-[#c9a84c] transition-all backdrop-blur-sm"
             >
               <svg width="11" height="11" viewBox="0 0 10 10" fill="none">
