@@ -47,17 +47,12 @@ function DishDetail({
           onClick={onClose}
         />
 
-        {/* Sliding Panel */}
+        {/* Panel */}
         <motion.div
-          initial={{ x: "100%" }}
-          animate={{ x: 0 }}
-          exit={{ x: "100%" }}
-          transition={{ 
-            type: "spring", 
-            stiffness: 300, 
-            damping: 30,
-            duration: 0.5 
-          }}
+          initial={{ x: "100%", opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: "100%", opacity: 0 }}
+          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
           className="
             relative mt-auto w-full h-[92vh] sm:mt-0 sm:ml-auto sm:w-[560px] sm:h-full
             lg:w-full lg:h-full lg:flex lg:flex-row bg-[#0d0c0a]
@@ -85,15 +80,15 @@ function DishDetail({
               </div>
             ))}
 
-            {/* Close Button - Improved */}
+            {/* Close Button */}
             <motion.button
               onClick={onClose}
-              whileHover={{ scale: 1.1, rotate: 90 }}
+              whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              className="absolute top-5 right-5 w-10 h-10 flex items-center justify-center border border-[#c9a84c]/30 bg-[#0d0c0a]/70 text-[#c9a84c]/70 hover:text-[#c9a84c] hover:border-[#c9a84c] transition-all backdrop-blur-sm z-10"
+              className="absolute top-5 right-5 w-10 h-10 flex items-center justify-center border border-[#c9a84c]/30 bg-[#0d0c0a]/70 text-[#c9a84c]/70 hover:text-[#c9a84c] hover:border-[#c9a84c] transition-all backdrop-blur-sm"
             >
               <svg width="11" height="11" viewBox="0 0 10 10" fill="none">
-                <path d="M1 1l8 8M9 1l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                <path d="M1 1l8 8M9 1l-8 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
               </svg>
             </motion.button>
 
@@ -111,7 +106,7 @@ function DishDetail({
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
+                transition={{ delay: 0.3 }}
                 className="flex items-center gap-3 mb-4"
               >
                 <div className="w-5 h-px bg-[#c9a84c]/60" />
@@ -124,18 +119,18 @@ function DishDetail({
               <motion.h2
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
+                transition={{ delay: 0.4 }}
                 className="text-[#ede0c4] text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-light leading-tight mb-3"
                 style={{ fontFamily: "var(--font-cormorant)" }}
               >
                 {recipe.title}
               </motion.h2>
 
-              {/* Price */}
+              {/* Price (desktop) */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
+                transition={{ delay: 0.5 }}
                 className="hidden lg:block mb-5"
               >
                 <span className="text-[#c9a84c] tracking-[0.3em] text-sm uppercase" style={{ fontFamily: "var(--font-cinzel)" }}>
@@ -147,7 +142,7 @@ function DishDetail({
               <motion.p
                 initial={{ opacity: 0, y: 25 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
+                transition={{ delay: 0.6 }}
                 className="text-[#d4c5a0]/60 text-base sm:text-lg lg:text-xl leading-relaxed font-light mb-8"
                 style={{ fontFamily: "var(--font-cormorant)" }}
               >
@@ -159,7 +154,7 @@ function DishDetail({
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.6 }}
+                  transition={{ delay: 0.7 }}
                   className="mb-10"
                 >
                   <div className="flex items-center gap-3 mb-5">
@@ -174,7 +169,7 @@ function DishDetail({
                         key={ing}
                         initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.7 + i * 0.04 }}
+                        transition={{ delay: 0.8 + i * 0.05 }}
                         className="text-[#d4c5a0]/65 bg-[#c9a84c]/[0.06] border border-[#c9a84c]/12 px-3 py-1.5 text-sm sm:text-base"
                         style={{ fontFamily: "var(--font-cormorant)" }}
                       >
@@ -202,7 +197,6 @@ function DishDetail({
                   className="absolute inset-0 bg-[#c9a84c]"
                   initial={{ y: "100%" }}
                   whileHover={{ y: 0 }}
-                  transition={{ duration: 0.4 }}
                 />
                 <span className="relative z-10">
                   {added ? "✓ Zur Auswahl hinzugefügt" : `Zum Menü hinzufügen — ${recipe.price}`}
@@ -216,7 +210,7 @@ function DishDetail({
   );
 }
 
-// Main Component remains the same as before
+// ── Main Component ───────────────────────────────────────────────────
 export default function RecipeCarousel({ onAdd }: Props) {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
@@ -247,17 +241,20 @@ export default function RecipeCarousel({ onAdd }: Props) {
       <section id="menu" className="py-16 sm:py-24 lg:py-32 bg-[#0d0c0a]">
         <div className="max-w-2xl sm:max-w-3xl lg:max-w-4xl mx-auto px-4 sm:px-8 lg:px-12">
 
+          {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.9 }}
+            transition={{ duration: 0.9, ease: "easeOut" }}
             className="mb-10"
           >
             <div className="flex items-center gap-4 mb-5">
               <motion.div
                 initial={{ width: 0 }}
                 whileInView={{ width: 32 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1 }}
                 className="h-px bg-[#c9a84c]"
               />
               <span className="text-[#c9a84c]/60 tracking-[0.4em] text-[9px] uppercase" style={{ fontFamily: "var(--font-cinzel)" }}>
@@ -275,35 +272,47 @@ export default function RecipeCarousel({ onAdd }: Props) {
             </div>
           </motion.div>
 
+          {/* Top Rule */}
           <motion.div
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
             className="h-px mb-8 origin-left"
             style={{ background: "linear-gradient(to right, rgba(201,168,76,0.35), rgba(201,168,76,0.06), transparent)" }}
           />
 
           {loading && (
             <div className="flex justify-center items-center h-40 gap-4">
+              <div className="w-4 h-px bg-[#c9a84c] animate-pulse" />
               <span className="text-[#c9a84c]/50 tracking-[0.4em] text-[10px] uppercase animate-pulse" style={{ fontFamily: "var(--font-cinzel)" }}>
                 Speisekarte wird geladen
               </span>
             </div>
           )}
 
-          {error && <p className="text-red-400/70 text-center mt-8">{error}</p>}
+          {error && (
+            <p className="text-red-400/70 text-lg font-light text-center mt-8" style={{ fontFamily: "var(--font-cormorant)" }}>
+              {error}
+            </p>
+          )}
 
           {!loading && !error && (
             <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              variants={{ visible: { transition: { staggerChildren: 0.07 } }}}
+              variants={{
+                visible: { transition: { staggerChildren: 0.08 } }
+              }}
               className="border-t border-[#c9a84c]/10"
             >
               {recipes.map((recipe, index) => (
                 <motion.div
                   key={recipe.id ?? recipe.title}
-                  variants={{ hidden: { opacity: 0, x: -30 }, visible: { opacity: 1, x: 0 } }}
+                  variants={{
+                    hidden: { opacity: 0, x: -30 },
+                    visible: { opacity: 1, x: 0 }
+                  }}
                 >
                   <MenuRow
                     recipe={recipe}
@@ -315,9 +324,12 @@ export default function RecipeCarousel({ onAdd }: Props) {
             </motion.div>
           )}
 
+          {/* Footer Note */}
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.6 }}
             className="mt-10 flex items-center gap-5"
           >
             <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, rgba(201,168,76,0.15), transparent)" }} />
@@ -329,6 +341,7 @@ export default function RecipeCarousel({ onAdd }: Props) {
         </div>
       </section>
 
+      {/* Detail Modal */}
       <AnimatePresence>
         {activeRecipe && (
           <DishDetail
@@ -342,23 +355,32 @@ export default function RecipeCarousel({ onAdd }: Props) {
   );
 }
 
-// MenuRow Component
-function MenuRow({ recipe, index, onOpen }: { recipe: Recipe; index: number; onOpen: () => void }) {
-  const ingredientList = typeof recipe.ingredients === "string" 
-    ? recipe.ingredients.split(",").map(s => s.trim()) 
-    : [];
+// ── Compact Menu Row ──────────────────────────────────────────────
+function MenuRow({
+  recipe,
+  index,
+  onOpen,
+}: {
+  recipe: Recipe;
+  index: number;
+  onOpen: () => void;
+}) {
+  const ingredientList: string[] = 
+    typeof recipe.ingredients === "string" 
+      ? recipe.ingredients.split(",").map(s => s.trim())
+      : [];
 
   return (
     <motion.button
       onClick={onOpen}
       whileHover={{ x: 8 }}
-      className="w-full flex items-center gap-4 sm:gap-5 lg:gap-6 py-5 sm:py-6 lg:py-7 text-left border-b border-[#c9a84c]/10 last:border-0 group"
+      className="w-full flex items-center gap-4 sm:gap-5 lg:gap-6 py-5 sm:py-6 lg:py-7 text-left border-b border-[#c9a84c]/10 last:border-0 group transition-all"
     >
-      <span className="text-[#c9a84c]/20 text-[10px] lg:text-xs tracking-[0.3em] w-5 lg:w-6 flex-shrink-0 group-hover:text-[#c9a84c]/50" style={{ fontFamily: "var(--font-cinzel)" }}>
+      <span className="text-[#c9a84c]/20 text-[10px] lg:text-xs tracking-[0.3em] w-5 lg:w-6 flex-shrink-0 group-hover:text-[#c9a84c]/50 transition-colors" style={{ fontFamily: "var(--font-cinzel)" }}>
         {String(index + 1).padStart(2, "0")}
       </span>
 
-      <div className="relative w-12 h-12 sm:w-14 sm:h-14 lg:w-20 lg:h-20 flex-shrink-0 overflow-hidden border border-[#c9a84c]/10 group-hover:border-[#c9a84c]/35">
+      <div className="relative w-12 h-12 sm:w-14 sm:h-14 lg:w-20 lg:h-20 flex-shrink-0 overflow-hidden border border-[#c9a84c]/10 group-hover:border-[#c9a84c]/35 transition-all">
         <Image
           src={recipe.img}
           alt={recipe.title}
@@ -368,7 +390,7 @@ function MenuRow({ recipe, index, onOpen }: { recipe: Recipe; index: number; onO
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="text-[#ede0c4] text-base sm:text-xl lg:text-2xl font-light leading-snug truncate group-hover:text-[#c9a84c]" style={{ fontFamily: "var(--font-cormorant)" }}>
+        <p className="text-[#ede0c4] text-base sm:text-xl lg:text-2xl font-light leading-snug truncate group-hover:text-[#c9a84c] transition-colors" style={{ fontFamily: "var(--font-cormorant)" }}>
           {recipe.title}
         </p>
         <p className="text-[#d4c5a0]/25 text-xs sm:text-sm font-light mt-0.5 truncate" style={{ fontFamily: "var(--font-cormorant)" }}>
@@ -376,12 +398,12 @@ function MenuRow({ recipe, index, onOpen }: { recipe: Recipe; index: number; onO
         </p>
       </div>
 
-      <span className="text-[#c9a84c]/55 tracking-[0.2em] text-[10px] sm:text-xs lg:text-sm uppercase group-hover:text-[#c9a84c]" style={{ fontFamily: "var(--font-cinzel)" }}>
+      <span className="text-[#c9a84c]/55 tracking-[0.2em] text-[10px] sm:text-xs lg:text-sm uppercase flex-shrink-0 group-hover:text-[#c9a84c] transition-colors" style={{ fontFamily: "var(--font-cinzel)" }}>
         {recipe.price}
       </span>
 
-      <div className="w-5 h-5 lg:w-7 lg:h-7 flex-shrink-0 flex items-center justify-center border border-[#c9a84c]/10 group-hover:border-[#c9a84c]/40">
-        <svg width="7" height="7" viewBox="0 0 7 7" fill="none" className="text-[#c9a84c]/30 group-hover:text-[#c9a84c]/70">
+      <div className="w-5 h-5 lg:w-7 lg:h-7 flex-shrink-0 flex items-center justify-center border border-[#c9a84c]/10 group-hover:border-[#c9a84c]/40 transition-all">
+        <svg width="7" height="7" viewBox="0 0 7 7" fill="none" className="text-[#c9a84c]/30 group-hover:text-[#c9a84c]/70 transition-colors">
           <path d="M1 1l3 2.5L1 6M4 3.5h2" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </div>
