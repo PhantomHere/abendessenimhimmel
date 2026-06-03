@@ -10,7 +10,7 @@ export default function AboutUs() {
     { label: "Gegründet", value: "1923", roman: "IV" },
   ];
 
-  // Animation Variants
+  // Animation Variants - Fixed types
   const containerVariant = {
     hidden: { opacity: 0 },
     visible: {
@@ -27,7 +27,10 @@ export default function AboutUs() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: "easeOut" },
+      transition: { 
+        duration: 0.8, 
+        ease: [0.25, 0.1, 0.25, 1] as const, // Proper cubic-bezier
+      },
     },
   };
 
@@ -37,23 +40,26 @@ export default function AboutUs() {
       opacity: 1,
       scale: 1,
       y: 0,
-      transition: { duration: 0.6, ease: "easeOut" },
+      transition: { 
+        duration: 0.6, 
+        ease: [0.25, 0.1, 0.25, 1] as const 
+      },
     },
   };
 
   return (
     <section id="about" className="py-20 sm:py-32 bg-[#0d0c0a] relative overflow-hidden">
-      {/* Decorative background numeral - subtle floating animation */}
+      {/* Decorative background numeral */}
       <motion.div
         initial={{ opacity: 0.03, y: -20 }}
         animate={{ 
           opacity: 0.03, 
-          y: [ -20, 20, -20 ] 
+          y: [-20, 20, -20] 
         }}
         transition={{ 
           duration: 25, 
           repeat: Infinity,
-          ease: "easeInOut" 
+          ease: "easeInOut"
         }}
         className="absolute right-0 top-1/2 -translate-y-1/2 text-[#c9a84c]/[0.03] text-[14rem] sm:text-[28rem] font-black leading-none select-none pointer-events-none -mr-10 sm:-mr-24"
         style={{ fontFamily: "var(--font-cinzel)" }}
@@ -62,11 +68,12 @@ export default function AboutUs() {
       </motion.div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-8 relative">
-        {/* Section label with line animation */}
+        {/* Section label */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
           className="flex items-center gap-4 mb-10 sm:mb-16"
         >
           <motion.div 
@@ -128,7 +135,7 @@ export default function AboutUs() {
               </motion.p>
             </motion.div>
 
-            {/* Stats Grid */}
+            {/* Stats */}
             <motion.div 
               variants={containerVariant}
               className="grid grid-cols-2 gap-0 border-t border-[#c9a84c]/20"
@@ -139,7 +146,6 @@ export default function AboutUs() {
                   variants={statVariant}
                   whileHover={{ 
                     backgroundColor: "rgba(201, 168, 76, 0.05)",
-                    transition: { duration: 0.3 }
                   }}
                   className={`py-5 sm:py-7 pr-4 sm:pr-8 group ${i % 2 === 0 ? "border-r border-[#c9a84c]/20" : "pl-4 sm:pl-8"} ${i < 2 ? "border-b border-[#c9a84c]/20" : ""}`}
                 >
@@ -171,10 +177,9 @@ export default function AboutUs() {
             initial={{ opacity: 0, scale: 0.92 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
+            transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
             className="relative hidden sm:block"
           >
-            {/* Decorative frames with animation */}
             <motion.div 
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
@@ -193,15 +198,14 @@ export default function AboutUs() {
                 src="/imgs/airship-interior.jpg"
                 alt="Airship Interior"
                 className="w-full h-full object-cover opacity-75"
-                initial={{ scale: 1.1 }}
+                initial={{ scale: 1.08 }}
                 whileInView={{ scale: 1 }}
-                transition={{ duration: 1.8, ease: "easeOut" }}
+                transition={{ duration: 1.8, ease: [0.25, 0.1, 0.25, 1] }}
               />
               
               <div className="absolute inset-0 bg-gradient-to-t from-[#0d0c0a] via-transparent to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#0d0c0a]/30 to-transparent" />
 
-              {/* Quote overlay with staggered entrance */}
               <motion.div 
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
