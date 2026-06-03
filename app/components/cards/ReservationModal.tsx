@@ -142,6 +142,7 @@ export default function ReservationModal({ isOpen, onClose, cartItems, onSuccess
   const [flightDate, setFlightDate]         = useState("");
   const [submitState, setSubmitState]       = useState<SubmitState>("idle");
   const [errorMsg, setErrorMsg]             = useState("");
+  const prefersReduced = useReducedMotion();
 
   if (!isOpen) return null;
 
