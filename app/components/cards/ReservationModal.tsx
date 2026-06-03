@@ -220,6 +220,7 @@ export default function ReservationModal({ isOpen, onClose, cartItems, onSuccess
             guestName={guestName} selectedShip={selectedShip}
             selectedTable={selectedTable} flightDate={flightDate}
             onClose={handleClose}
+            prefersReduced={prefersReduced}
           />
         ) : (
           <>
