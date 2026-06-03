@@ -16,31 +16,13 @@ type SubmitState = "idle" | "loading" | "success" | "error";
 const SILK     = [0.16, 1, 0.3, 1]      as const;
 const EDITORIAL = [0.25, 0.1, 0.25, 1]  as const;
 
-// ── Directional step transition ───────────────────────────────────
-function useStepVariants(dir: 1 | -1) {
-  const prefersReduced = useReducedMotion();
-  if (prefersReduced) {
-    return {
-      enter:   { opacity: 0 },
-      center:  { opacity: 1, x: 0, filter: "blur(0px)" },
-      exit:    { opacity: 0 },
-    };
-  }
-  return {
-    enter:  { x: dir * 48, opacity: 0, filter: "blur(4px)" },
-    center: { x: 0, opacity: 1, filter: "blur(0px)",
-              transition: { duration: 0.45, ease: SILK } },
-    exit:   { x: dir * -32, opacity: 0, filter: "blur(3px)",
-              transition: { duration: 0.3, ease: EDITORIAL } },
-  };
-}
-
 // ── Success screen ────────────────────────────────────────────────
 function SuccessScreen({
-  guestName, selectedShip, selectedTable, flightDate, onClose,
+  guestName, selectedShip, selectedTable, flightDate, onClose, prefersReduced,
 }: {
   guestName: string; selectedShip: string;
   selectedTable: number | string | null; flightDate: string; onClose: () => void;
+  prefersReduced: boolean | null;
 }) {
   return (
     <>
@@ -160,11 +142,22 @@ export default function ReservationModal({ isOpen, onClose, cartItems, onSuccess
   const [flightDate, setFlightDate]         = useState("");
   const [submitState, setSubmitState]       = useState<SubmitState>("idle");
   const [errorMsg, setErrorMsg]             = useState("");
-  const prefersReduced = useReducedMotion();
 
   if (!isOpen) return null;
 
   const dir = step >= prevStep ? 1 : -1;
+
+  const stepVariants = {
+    enter:  prefersReduced ? { opacity: 0 }
+            : { x: dir * 48, opacity: 0, filter: "blur(4px)" },
+    center: prefersReduced
+            ? { opacity: 1, x: 0, filter: "blur(0px)" }
+            : { x: 0, opacity: 1, filter: "blur(0px)",
+                transition: { duration: 0.45, ease: SILK } },
+    exit:   prefersReduced ? { opacity: 0 }
+            : { x: dir * -32, opacity: 0, filter: "blur(3px)",
+                transition: { duration: 0.3, ease: EDITORIAL } },
+  };
 
   const goTo = (next: number) => {
     setPrevStep(step);
@@ -217,9 +210,6 @@ export default function ReservationModal({ isOpen, onClose, cartItems, onSuccess
   };
 
   const stepLabels = ["Luftschiff", "Sitzplan", "Abschluss"];
-
-  // ── step variants (direction-aware) ──
-  const sv = useStepVariants(dir);
 
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-6">
@@ -321,11 +311,7 @@ export default function ReservationModal({ isOpen, onClose, cartItems, onSuccess
                   <AnimatePresence mode="wait" custom={dir}>
                     <motion.div
                       key={step}
-                      variants={{
-                        enter:  sv.enter,
-                        center: sv.center,
-                        exit:   sv.exit,
-                      }}
+                      variants={stepVariants}
                       initial="enter"
                       animate="center"
                       exit="exit"
